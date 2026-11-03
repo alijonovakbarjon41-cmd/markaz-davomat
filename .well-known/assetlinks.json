@@ -2,9 +2,9 @@
   "relation": ["delegate_permission/common.handle_all_urls"],
   "target": {
     "namespace": "android_app",
-    "package_name": "io.github.alijonovakbarjon41-cmd.markaz-davomat",
+    "package_name": "io.github.alijonovakbarjon41_cmd.twa",
     "sha256_cert_fingerprints": [
-      "95:2E:B0:A4:9A:86:A2:F4:89:08:51:E0:2B:53:57:2A:66:88:8A:A5:45:26:E0:13:04:11:88:68:54:21:E4:15"
+      "12:B4:15:B1:1F:20:C7:16:F3:55:6D:8F:9D:FB:0C:8C:C9:7A:8F:ED:B8:C6:9C:52:CF:15:A0:AC:DC:48:F2:95"
     ]
   }
 }]
