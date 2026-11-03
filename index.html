@@ -1,0 +1,2877 @@
+<!DOCTYPE html>
+<html lang="uz">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<link rel="manifest" href="manifest.json">
+<title>O'quv markaz nazorat jurnali & O'qituvchi boshqaruvi</title>
+<style>
+:root {
+  --bg: #EEF2F6;
+  --pane: #FFFFFF;
+  --pane-sub: #F8FAFC;
+  --ink: #1E293B;
+  --mut: #64748B;
+  --line: #E2E8F0;
+  --line-strong: #CBD5E1;
+  --ac: #1E40AF;
+  --ac-light: #EFF6FF;
+  --ac-hover: #1D4ED8;
+  --ok: #16A34A;
+  --ok-light: #F0FDF4;
+  --bad: #DC2626;
+  --bad-light: #FEF2F2;
+  --warn: #D97706;
+  --warn-light: #FFFBEB;
+  --info: #0284C7;
+  --info-light: #F0F9FF;
+  --side: #0F172A;
+  --side-hover: #1E293B;
+  --radius: 8px;
+  --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+  --shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -2px rgba(0, 0, 0, 0.1);
+}
+* { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+html, body { margin: 0; padding: 0; min-height: 100vh; }
+body {
+  font: 14.5px/1.5 "Segoe UI", system-ui, -apple-system, Roboto, sans-serif;
+  background: var(--bg);
+  color: var(--ink);
+}
+h1 { font-size: 22px; margin: 0 0 4px; font-weight: 700; color: #0F172A; }
+h2 { font-size: 16.5px; margin: 0 0 12px; font-weight: 650; color: #1E293B; }
+h3 { font-size: 15px; margin: 0 0 8px; font-weight: 600; }
+p { margin: 0 0 6px; }
+.mut { color: var(--mut); }
+small { color: var(--mut); }
+a { color: var(--ac); cursor: pointer; text-decoration: none; }
+a:hover { text-decoration: underline; }
+
+button, .btn {
+  font: inherit;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  background: var(--ac);
+  color: #fff;
+  border: 1px solid var(--ac);
+  padding: 8px 16px;
+  border-radius: var(--radius);
+  cursor: pointer;
+  font-weight: 500;
+  transition: all 0.15s ease;
+  min-height: 38px;
+  touch-action: manipulation;
+}
+button:hover, .btn:hover { background: var(--ac-hover); border-color: var(--ac-hover); }
+button:active, .btn:active { transform: translateY(1px); }
+button:disabled { opacity: 0.5; cursor: not-allowed; transform: none; }
+
+button.ghost { background: #fff; color: var(--ac); border-color: var(--line-strong); }
+button.ghost:hover { background: var(--ac-light); border-color: var(--ac); }
+button.ghost.on { background: var(--ac); color: #fff; border-color: var(--ac); }
+
+button.success { background: var(--ok); border-color: var(--ok); color: #fff; }
+button.success:hover { background: #15803D; }
+
+button.danger { background: #fff; color: var(--bad); border-color: #FECACA; }
+button.danger:hover { background: var(--bad-light); border-color: var(--bad); }
+
+button.sm, .btn.sm { padding: 4px 10px; font-size: 13px; min-height: 28px; border-radius: 6px; }
+button.lg, .btn.lg { padding: 12px 22px; font-size: 16px; min-height: 46px; }
+
+input, select, textarea {
+  font: inherit;
+  width: 100%;
+  padding: 8px 12px;
+  border: 1px solid var(--line-strong);
+  border-radius: var(--radius);
+  background: #fff;
+  color: var(--ink);
+  transition: border-color 0.15s ease, box-shadow 0.15s ease;
+}
+input:focus, select:focus, textarea:focus {
+  outline: none;
+  border-color: #3B82F6;
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.2);
+}
+label { display: block; margin-bottom: 14px; font-size: 13.5px; font-weight: 500; color: #334155; }
+label span.desc { display: block; font-size: 12px; font-weight: 400; color: var(--mut); margin-top: 2px; }
+label input, label select, label textarea { margin-top: 5px; }
+
+/* Layout */
+.shell { display: flex; min-height: 100vh; }
+aside {
+  width: 240px;
+  background: var(--side);
+  color: #CBD5E1;
+  display: flex;
+  flex-direction: column;
+  position: sticky;
+  top: 0;
+  height: 100vh;
+  flex: none;
+  z-index: 10;
+}
+.brand {
+  padding: 20px 18px 16px;
+  color: #FFFFFF;
+  font-weight: 700;
+  font-size: 17px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.brand-icon {
+  width: 32px;
+  height: 32px;
+  background: linear-gradient(135deg, #3B82F6, #1E40AF);
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 18px;
+  color: #fff;
+}
+.brand small { display: block; color: #94A3B8; font-weight: 400; font-size: 12px; margin-top: 2px; }
+
+nav { padding: 12px 10px; flex: 1; overflow-y: auto; }
+nav a {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 14px;
+  color: #CBD5E1;
+  text-decoration: none;
+  border-radius: 6px;
+  margin-bottom: 3px;
+  font-weight: 500;
+  transition: all 0.15s ease;
+}
+nav a:hover { background: var(--side-hover); color: #fff; }
+nav a.on { background: #1E293B; color: #fff; font-weight: 600; box-shadow: inset 3px 0 0 #38BDF8; }
+nav a .icon { font-size: 16px; width: 20px; text-align: center; }
+
+.side-foot {
+  padding: 14px 16px;
+  border-top: 1px solid rgba(255, 255, 255, 0.08);
+  background: #0B1120;
+}
+.sync-indicator {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 12px;
+  color: #94A3B8;
+  margin-bottom: 12px;
+}
+.sync-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: #94A3B8;
+  flex: none;
+}
+.sync-dot.green { background: #22C55E; box-shadow: 0 0 8px #22C55E; }
+.sync-dot.yellow { background: #EAB308; }
+.sync-dot.red { background: #EF4444; }
+.side-foot button { width: 100%; background: transparent; color: #CBD5E1; border-color: #334155; }
+.side-foot button:hover { background: #1E293B; color: #fff; }
+
+main { flex: 1; min-width: 0; padding: 26px 32px 60px; max-width: 1360px; }
+.head {
+  display: flex;
+  justify-content: space-between;
+  gap: 16px;
+  align-items: flex-start;
+  flex-wrap: wrap;
+  margin-bottom: 20px;
+}
+.btns { display: flex; gap: 8px; flex-wrap: wrap; align-items: center; }
+.back { font-size: 13px; text-decoration: none; display: inline-flex; align-items: center; gap: 4px; margin-bottom: 8px; color: var(--mut); }
+.back:hover { color: var(--ac); }
+
+.card {
+  background: var(--pane);
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  padding: 20px;
+  margin-bottom: 20px;
+  box-shadow: var(--shadow-sm);
+}
+.grid2 { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-bottom: 20px; }
+.grid2 > .card { margin-bottom: 0; }
+.grid3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; margin-bottom: 20px; }
+
+/* Stats cards */
+.stats { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; margin-bottom: 24px; }
+.stat {
+  background: var(--pane);
+  border: 1px solid var(--line);
+  border-left: 4px solid var(--ac);
+  border-radius: var(--radius);
+  padding: 16px 18px;
+  box-shadow: var(--shadow-sm);
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+.stat b { font-size: 24px; line-height: 1.2; font-weight: 700; color: #0F172A; }
+.stat span { color: var(--mut); font-size: 13px; margin-top: 4px; }
+.stat small.sub { font-size: 11.5px; color: #64748B; margin-top: 2px; }
+.stat.green { border-left-color: var(--ok); }
+.stat.green b { color: var(--ok); }
+.stat.warn { border-left-color: var(--warn); }
+.stat.warn b { color: var(--warn); }
+.stat.blue { border-left-color: #3B82F6; }
+.stat.bad { border-left-color: var(--bad); }
+.stat.bad b { color: var(--bad); }
+
+/* Tables */
+.tw { overflow-x: auto; -webkit-overflow-scrolling: touch; border-radius: var(--radius); border: 1px solid var(--line); }
+table { width: 100%; border-collapse: collapse; font-size: 14px; background: #fff; }
+th {
+  text-align: left;
+  font-weight: 600;
+  color: var(--mut);
+  font-size: 12.5px;
+  padding: 10px 12px;
+  border-bottom: 2px solid var(--line);
+  background: #F8FAFC;
+  white-space: nowrap;
+}
+td { padding: 11px 12px; border-bottom: 1px solid #EDF2F7; vertical-align: middle; }
+tr.row { cursor: pointer; transition: background 0.1s; }
+tr.row:hover td { background: #F8FAFC; }
+td.r, th.r { text-align: right; }
+td.c, th.c { text-align: center; }
+
+/* Badges */
+.badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 3px 9px;
+  border-radius: 9999px;
+  font-size: 12px;
+  font-weight: 600;
+  white-space: nowrap;
+}
+.b-ok { background: var(--ok-light); color: var(--ok); border: 1px solid #BBF7D0; }
+.b-bad { background: var(--bad-light); color: var(--bad); border: 1px solid #FECACA; }
+.b-warn { background: var(--warn-light); color: var(--warn); border: 1px solid #FDE68A; }
+.b-info { background: var(--info-light); color: var(--info); border: 1px solid #BAE6FD; }
+.b-n { background: #F1F5F9; color: var(--mut); border: 1px solid var(--line); }
+
+/* Progress bar */
+.bar-wrap { display: flex; align-items: center; gap: 8px; }
+.bar { flex: 1; height: 7px; background: #E2E8F0; border-radius: 99px; overflow: hidden; min-width: 60px; }
+.bar i { display: block; height: 100%; background: linear-gradient(90deg, #3B82F6, #1E40AF); border-radius: 99px; }
+.bar.green i { background: linear-gradient(90deg, #22C55E, #16A34A); }
+
+.tools { display: flex; gap: 10px; margin-bottom: 16px; flex-wrap: wrap; }
+.tools > * { width: auto; flex: 1; min-width: 170px; }
+.tools > label { margin: 0; flex: 1; }
+
+.note {
+  background: #FFF;
+  border: 1px solid var(--line);
+  border-left: 4px solid var(--warn);
+  padding: 12px 16px;
+  border-radius: var(--radius);
+  margin-bottom: 20px;
+  font-size: 13.5px;
+  display: flex;
+  gap: 12px;
+  align-items: center;
+  flex-wrap: wrap;
+  box-shadow: var(--shadow-sm);
+}
+.note.info { border-left-color: #3B82F6; background: #F8FAFC; }
+.note.success { border-left-color: var(--ok); background: #F0FDF4; }
+
+/* Modal */
+.ov {
+  position: fixed;
+  inset: 0;
+  background: rgba(15, 23, 42, 0.6);
+  backdrop-filter: blur(2px);
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
+  padding: 30px 14px;
+  overflow: auto;
+  z-index: 100;
+}
+.mod {
+  background: #fff;
+  border-radius: 12px;
+  padding: 24px;
+  width: 100%;
+  max-width: 520px;
+  box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.2);
+  border: 1px solid var(--line);
+}
+.mod h2 { margin-top: 0; border-bottom: 1px solid var(--line); padding-bottom: 10px; }
+.mod .btns { justify-content: flex-end; margin-top: 18px; }
+
+/* Radio / Segment buttons */
+.seg-group { display: flex; flex-wrap: wrap; gap: 4px; margin-top: 4px; }
+.seg { display: inline-block; position: relative; margin: 0; }
+.seg input { position: absolute; opacity: 0; width: 100%; height: 100%; margin: 0; cursor: pointer; }
+.seg span {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 6px 12px;
+  border: 1px solid var(--line-strong);
+  border-radius: 6px;
+  font-size: 13px;
+  color: var(--ink);
+  background: #fff;
+  cursor: pointer;
+  user-select: none;
+}
+.seg input:checked + span {
+  background: var(--ac);
+  border-color: var(--ac);
+  color: #fff;
+  font-weight: 600;
+}
+.seg.p input:checked + span { background: var(--ok); border-color: var(--ok); color: #fff; }
+.seg.a input:checked + span { background: var(--bad); border-color: var(--bad); color: #fff; }
+.seg.e input:checked + span { background: var(--warn); border-color: var(--warn); color: #fff; }
+
+/* Attendance grid */
+.gt table { width: auto; min-width: 100%; }
+.gt th, .gt td { padding: 6px 4px; text-align: center; }
+.gt th:first-child, .gt td:first-child {
+  position: sticky;
+  left: 0;
+  background: #fff;
+  z-index: 2;
+  text-align: left;
+  min-width: 160px;
+  padding-left: 12px;
+  box-shadow: 2px 0 4px -2px rgba(0,0,0,0.1);
+}
+.gt tr.sum td { background: #F8FAFC; font-weight: 700; font-size: 13px; }
+.dc { min-width: 38px; }
+.dc a { font-weight: 700; color: var(--ink) !important; text-decoration: none; line-height: 1.2; display: block; }
+.dc small { font-weight: 500; font-size: 11px; }
+.dc.tdy { background: #DBEAFE; }
+.dc.wkn { background: #F1F5F9; }
+.al { font-size: 12px; color: var(--ok) !important; text-decoration: none; display: inline-block; margin-top: 2px; }
+
+.cell {
+  width: 32px;
+  height: 32px;
+  padding: 0;
+  border-radius: 6px;
+  border: 1px solid var(--line-strong);
+  background: #fff;
+  color: #94A3B8;
+  font-size: 14px;
+  font-weight: 700;
+  cursor: pointer;
+  touch-action: manipulation;
+  transition: all 0.1s;
+}
+.cell:hover { background: #F1F5F9; border-color: #94A3B8; }
+.cell.v-p { background: #22C55E; border-color: #16A34A; color: #fff; }
+.cell.v-a { background: #EF4444; border-color: #DC2626; color: #fff; }
+.cell.v-e { background: #F59E0B; border-color: #D97706; color: #fff; }
+
+/* Diary week cards */
+.wk { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 14px; margin-top: 14px; }
+.dy {
+  background: #fff;
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  padding: 14px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  min-height: 180px;
+  box-shadow: var(--shadow-sm);
+}
+.dy.ls { border-top: 4px solid var(--ac); }
+.dy.off { background: #F8FAFC; color: var(--mut); opacity: 0.85; }
+.dy.tn { box-shadow: 0 0 0 2px #3B82F6; }
+.dh { display: flex; justify-content: space-between; font-size: 13px; color: var(--mut); border-bottom: 1px solid var(--line); padding-bottom: 6px; }
+.dh b { color: var(--ink); font-size: 15px; }
+.dy .tp { font-weight: 600; color: #0F172A; font-size: 13.5px; }
+.dy button { margin-top: auto; }
+
+/* Attendance pills & logs */
+.att-list { display: flex; flex-wrap: wrap; gap: 6px; margin: 8px 0; }
+.att-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 4px 10px;
+  border-radius: 6px;
+  font-size: 12.5px;
+  font-weight: 500;
+}
+.att-pill.ok { background: #DCFCE7; color: #15803D; border: 1px solid #86EFAC; }
+.att-pill.bad { background: #FEE2E2; color: #B91C1C; border: 1px solid #FCA5A5; }
+.att-pill.warn { background: #FEF3C7; color: #B45309; border: 1px solid #FDE68A; }
+
+/* Syllabus / Plan numbered list */
+ol.syllabus { margin: 0; padding-left: 20px; counter-reset: item; }
+ol.syllabus li {
+  padding: 6px 0;
+  border-bottom: 1px solid #F1F5F9;
+  font-size: 13.5px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+ol.syllabus li.done { color: var(--mut); text-decoration: line-through; }
+ol.syllabus li.active { font-weight: 700; color: var(--ac); background: #EFF6FF; padding: 6px 8px; border-radius: 6px; }
+
+/* Mobile bottom nav */
+.mobile-nav { display: none !important; }
+
+/* Notes styles */
+.notes-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+  gap: 16px;
+  margin-top: 16px;
+}
+.note-card {
+  background: #fff;
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  box-shadow: var(--shadow-sm);
+  transition: transform 0.15s ease, box-shadow 0.15s ease;
+  position: relative;
+  border-left: 5px solid #3B82F6;
+}
+.note-card:hover {
+  box-shadow: var(--shadow);
+  transform: translateY(-2px);
+}
+.note-card.note-blue { border-left-color: #3B82F6; }
+.note-card.note-emerald { border-left-color: #10B981; }
+.note-card.note-amber { border-left-color: #F59E0B; }
+.note-card.note-rose { border-left-color: #F43F5E; }
+.note-card.note-purple { border-left-color: #8B5CF6; }
+.note-card.note-slate { border-left-color: #64748B; }
+
+.note-card.pinned {
+  background: #F8FAFC;
+  border-color: #CBD5E1;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+}
+.note-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 8px;
+  margin-bottom: 8px;
+}
+.note-title {
+  font-size: 16px;
+  font-weight: 700;
+  color: #0F172A;
+  margin: 0 0 6px;
+  line-height: 1.35;
+}
+.note-body {
+  color: #334155;
+  font-size: 13.5px;
+  line-height: 1.55;
+  white-space: pre-wrap;
+  word-break: break-word;
+  flex: 1;
+  margin-bottom: 14px;
+}
+.note-meta {
+  font-size: 11.5px;
+  color: var(--mut);
+  border-top: 1px solid #F1F5F9;
+  padding-top: 10px;
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+.note-actions {
+  display: flex;
+  gap: 6px;
+  align-items: center;
+}
+.pill-filter {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin: 12px 0;
+}
+.pill-btn {
+  padding: 5px 12px;
+  border-radius: 20px;
+  border: 1px solid var(--line-strong);
+  background: #fff;
+  color: #334155;
+  font-size: 12.5px;
+  cursor: pointer;
+  font-weight: 500;
+  transition: all 0.15s ease;
+}
+.pill-btn:hover {
+  background: var(--ac-light);
+  border-color: var(--ac);
+  color: var(--ac);
+}
+.pill-btn.on {
+  background: var(--ac);
+  color: #fff;
+  border-color: var(--ac);
+}
+
+/* Responsive Top Navigation (Netlify emblemasi pastda to'sib qo'ymasligi uchun menyu yuqorida chiqadi) */
+@media (max-width: 900px) {
+  .shell { display: block; padding-bottom: 20px; }
+  aside {
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    width: 100%;
+    height: auto;
+    background: #0F172A;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.12);
+    box-shadow: 0 4px 14px rgba(0, 0, 0, 0.22);
+    display: flex;
+    flex-direction: column;
+  }
+  .brand {
+    border: 0;
+    padding: 10px 14px 6px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    width: 100%;
+  }
+  .brand .brand-title {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  .brand .brand-actions {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  nav {
+    display: flex;
+    overflow-x: auto;
+    flex-wrap: nowrap;
+    width: 100%;
+    padding: 6px 12px 10px;
+    gap: 6px;
+    scrollbar-width: none;
+    -webkit-overflow-scrolling: touch;
+  }
+  nav::-webkit-scrollbar { display: none; }
+  nav a {
+    white-space: nowrap;
+    margin: 0;
+    padding: 6px 13px;
+    font-size: 13px;
+    border-radius: 20px;
+    background: rgba(255, 255, 255, 0.08);
+    color: #E2E8F0;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    flex: 0 0 auto;
+    text-decoration: none;
+  }
+  nav a:hover {
+    background: rgba(255, 255, 255, 0.16);
+    color: #fff;
+  }
+  nav a.on {
+    background: #38BDF8;
+    color: #0F172A;
+    font-weight: 700;
+    box-shadow: 0 2px 8px rgba(56, 189, 248, 0.35);
+  }
+  .side-foot { display: none; }
+  main { padding: 16px 12px 30px; }
+  .stats { grid-template-columns: 1fr 1fr; gap: 10px; }
+  .grid2, .grid3 { grid-template-columns: 1fr; gap: 14px; }
+  .mobile-nav { display: none !important; }
+}
+
+@media print {
+  aside, .mobile-nav, .noprint, .tools, .note, button, .btns { display: none !important; }
+  .shell { display: block; }
+  main { padding: 0; max-width: none; }
+  .cell { border: 0; }
+  .card { border: 0; box-shadow: none; padding: 0; margin-bottom: 20px; }
+}
+</style>
+</head>
+<body>
+<div id="app"></div>
+
+<script>
+"use strict";
+
+const $ = s => document.querySelector(s);
+const $$ = s => document.querySelectorAll(s);
+const app = $('#app');
+const uid = () => Math.random().toString(36).slice(2, 9) + Date.now().toString(36).slice(-3);
+const esc = s => String(s ?? '').replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+const p2 = n => String(n).padStart(2, '0');
+const ymd = d => d.getFullYear() + '-' + p2(d.getMonth() + 1) + '-' + p2(d.getDate());
+const today = () => ymd(new Date());
+const now = () => { const d = new Date(); return today() + 'T' + p2(d.getHours()) + ':' + p2(d.getMinutes()); };
+const month = () => today().slice(0, 7);
+const fmt = n => Number(n || 0).toLocaleString('ru-RU') + " so'm";
+const fdate = d => d ? d.split('-').reverse().join('.') : '';
+const fmonth = m => m ? m.split('-').reverse().join('.') : '';
+
+function hash(s) {
+  let a = 0xdeadbeef, b = 0x41c6ce57;
+  for (let i = 0; i < s.length; i++) {
+    const c = s.charCodeAt(i);
+    a = Math.imul(a ^ c, 2654435761);
+    b = Math.imul(b ^ c, 1597334677);
+  }
+  a = Math.imul(a ^ a >>> 16, 2246822507) ^ Math.imul(b ^ b >>> 13, 3266489909);
+  b = Math.imul(b ^ b >>> 16, 2246822507) ^ Math.imul(a ^ a >>> 13, 3266489909);
+  return (4294967296 * (2097151 & b) + (a >>> 0)).toString(36);
+}
+
+/* Tayyor dars rejalari (Syllabus Presets) */
+const SYLLABUS_PRESETS = {
+  komp: [
+    "1. Kompyuter qurilmalari, Windows 10/11 interfeysi va asosiy sozlamalar",
+    "2. Klaviatura trenajyori, fayl va papkalar bilan to'g'ri ishlash",
+    "3. Microsoft Word: Matn terish qoidalari, shriftlar va abzas formatlash",
+    "4. Microsoft Word: Jadvallar, rasmlar va shakllar bilan ishlash",
+    "5. Microsoft Word: Hujjat tuzilishi, mundarija va sahifalash",
+    "6. Microsoft Word: Rasmiy hujjatlar tayyorlash va chop etish (Print)",
+    "7. Microsoft Word amaliy imtihon va mustaqil ish",
+    "8. Microsoft Excel: Interfeys, kataklar, satr va ustunlar bilan ishlash",
+    "9. Microsoft Excel: Ma'lumot turlari va oddiy hisob-kitoblar (+, -, *, /)",
+    "10. Microsoft Excel: Asosiy formulalar: SUM, AVERAGE, MIN, MAX, COUNT",
+    "11. Microsoft Excel: Mantiqiy formulalar: IF, AND, OR, SUMIF",
+    "12. Microsoft Excel: Diagrammalar, grafiklar va ma'lumotlarni vizuallashtirish",
+    "13. Microsoft Excel: Filtrlash, saralash (Sort & Filter) va shartli formatlash",
+    "14. Microsoft Excel: VLOOKUP va zamonaviy XLOOKUP formulalari",
+    "15. Microsoft Excel: Amaliy kassa va hisobot jadvallari tuzish",
+    "16. Microsoft Excel bo'yicha amaliy test va mustaqil loyiha",
+    "17. Microsoft PowerPoint: Taqdimot yaratish, slaydlar va dizayn shablonlari",
+    "18. Microsoft PowerPoint: Animatsiyalar, o'tish effektlari (Transitions) va multimediya",
+    "19. Microsoft PowerPoint: Professional taqdimot himoyasi va SmartArt",
+    "20. Internet, brauzerlar, axborot xavfsizligi va viruslardan himoyalanish",
+    "21. Elektron pochta (Gmail) bilan ishlash va xat yozish etikasi",
+    "22. Bulutli xizmatlar: Google Drive, Google Docs va Google Sheets",
+    "23. Foydali servislar, arxivatorlar (WinRAR), PDF tahrirlash va Telegram desktop",
+    "24. Yakuniy imtihon: Nazariy test va amaliy topshiriqlar"
+  ],
+  it_foundation: [
+    "1. Dasturlashga kirish, kompyuter mantig'i, binar tizim va kompilyatsiya",
+    "2. Algoritmlar tushunchasi, blok-sxemalar va masalani bosqichlarga ajratish",
+    "3. Dasturlash muhiti bilan tanishuv (VS Code, terminal buyruqlari)",
+    "4. O'zgaruvchilar, xotira, ma'lumot turlari (int, float, string, boolean)",
+    "5. Arifmetik va mantiqiy operatorlar, taqqoslash amallari",
+    "6. Shart operatorlari: if, else if, else va mantiqiy shartlar",
+    "7. Murakkab shartlar va tanlash operatori: switch-case",
+    "8. Sikllar (Loops): for sikli va hisoblagichlar",
+    "9. Sikllar (Loops): while va do-while sikllari, break va continue",
+    "10. Ichma-ich sikllar (Nested loops) va naqshlar chizish",
+    "11. Funksiyalar: e'lon qilish, parametrlar va argumentlar",
+    "12. Funksiyalardan qiymat qaytarish (return) va scope",
+    "13. Massivlar (Arrays): indekslash, massiv elementlarini kiritish va chiqarish",
+    "14. Massivlar ustida amallar: yig'indi, o'rtacha, minimum va maksimum topish",
+    "15. Satrlar (Strings) bilan ishlash: qidirish, kesish va formatlash",
+    "16. Ko'p o'lchamli massivlar va matritsalar bilan ishlash",
+    "17. Qidiruv algoritmlari: Chiziqli qidiruv (Linear) va Ikkilik qidiruv (Binary search)",
+    "18. Saralash algoritmlari: Bubble sort, Selection sort",
+    "19. Rekursiya tushunchasi va sodda rekursiv masalalar",
+    "20. Obyektga yo'naltirilgan dasturlash (OOP) kirish: Klass va Obyektlar",
+    "21. Konstruktorlar, metodlar va inkapsulyatsiya asoslari",
+    "22. Dasturiy xatoliklar (Debugging) va kodni toza yozish (Clean Code)",
+    "23. Algoritmik masalalar yechish va LeetCode asoslari",
+    "24. Foundation bosqichi bo'yicha yakuniy sinov loyihasi"
+  ],
+  it_frontend: [
+    "1. Web qanday ishlaydi: Internet, brauzer, Client-Server, HTTP/HTTPS",
+    "2. HTML5 asoslari: semantik teglar, matn, havolalar va ro'yxatlar",
+    "3. HTML5: Rasmlar, audio, video va multimediya elementlari",
+    "4. HTML5: Formalar, input turlari, validatsiya va tugmalar",
+    "5. CSS3 asoslari: Selektorlar, ranglar, shriftlar va o'lchov birliklari",
+    "6. CSS Box Model: margin, padding, border, box-sizing va display xossalari",
+    "7. CSS Positioning: static, relative, absolute, fixed, sticky",
+    "8. CSS Flexbox: container va item xossalari, markazlashtirish",
+    "9. CSS Grid: grid-template, gap, auto-fit, auto-fill bilan murakkab sxemalar",
+    "10. Responsive Web Design: Media queries, Mobile-First yondashuv",
+    "11. CSS Transitions, Animations va Transform effektlari",
+    "12. Git va GitHub: repozitoriya, commit, push, pull va branchlar",
+    "13. 1-Bosqich loyihasi: Professional Landing Page tayyorlash",
+    "14. JavaScript kirish: Sintaksis, o'zgaruvchilar (let, const), ma'lumot turlari",
+    "15. JS: Operatorlar, shartlar (if/else), sikllar (for, while, for-of)",
+    "16. JS: Funksiyalar, Arrow functions, Default parametrlar",
+    "17. JS: Massiv metodlari (map, filter, reduce, find, some, every)",
+    "18. JS: Obyektlar, destructuring, spread/rest operatorlari",
+    "19. JS DOM: Elementlarni tanlash, yaratish, o'chirish va sinflar bilan ishlash",
+    "20. JS Hodisalar (Events): click, submit, change, keydown va hodisalar delegatsiyasi",
+    "21. JS: LocalStorage, SessionStorage va brauzer xotirasi",
+    "22. Asinxron JS: Event Loop, setTimeout, setInterval",
+    "23. Promises va Async/Await bilan ishlash",
+    "24. Fetch API: REST API dan ma'lumot olish va jo'natish (GET, POST)",
+    "25. Mini-loyiha: ToDo ilovasi yoki Ob-havo dasturi",
+    "26. Tailwind CSS: Utility-first CSS framework bilan tezkor dizayn",
+    "27. React.js ga kirish: SPA tushunchasi, Vite bilan loyiha ko'tarish",
+    "28. React JSX sintaksisi va Komponentlar arxitekturasi",
+    "29. React: Props va ma'lumot uzatish",
+    "30. React: useState hooki va formalar bilan ishlash",
+    "31. React: useEffect hooki va API bilan ishlash",
+    "32. React: Shartli render (Conditional rendering) va ro'yxatlar (Keys)",
+    "33. React Router DOM: Sahifalar yaratish va navigatsiya",
+    "34. Global State boshqaruvi: Context API yoki Zustand asoslari",
+    "35. Frontend loyihani Vercel / Netlify-ga joylash (Deploy)",
+    "36. Yakuniy diplom loyihasi: To'liq interaktiv veb-ilova taqdimoti"
+  ],
+  it_backend: [
+    "1. Backend asoslari: Server arxitekturasi, Request-Response va REST API prinsiplari",
+    "2. Node.js muhiti: Event Loop, modullar (CommonJS / ES Modules) va npm paketlar",
+    "3. Node.js built-in modullari: fs, path, http, os bilan ishlash",
+    "4. Express.js frameworki: Server yaratish, marshrutlash (Routing) asoslari",
+    "5. Middleware nima va u bilan ishlash (CORS, body-parser, morgan)",
+    "6. REST API CRUD operatsiyalari (GET, POST, PUT, DELETE)",
+    "7. Request obyektlari: params, query, body bilan to'g'ri ishlash",
+    "8. Ma'lumotlar bazalariga kirish: Relyatsion (SQL) vs Relyatsion bo'lmagan (NoSQL)",
+    "9. PostgreSQL / MySQL asoslari: Jadvallar yaratish, ma'lumot turlari",
+    "10. SQL so'rovlari: SELECT, WHERE, ORDER BY, LIMIT, INSERT, UPDATE, DELETE",
+    "11. SQL munosabatlar va JOINlar: One-to-Many, Many-to-Many, INNER JOIN, LEFT JOIN",
+    "12. ORM bilan tanishuv: Prisma yoki Sequelize o'rnatish va sxema yaratish",
+    "13. Prisma bilan bazaga bog'lanish va CRUD amallarini bajarish",
+    "14. MongoDB va Mongoose bilan ishlash asoslari",
+    "15. Ma'lumotlar validatsiyasi: Joi yoki Zod kutubxonasi",
+    "16. Xatoliklarni markazlashgan boshqarish (Global Error Handling Middleware)",
+    "17. Autentifikatsiya: Parollarni xeshlashtirish (bcryptjs)",
+    "18. JWT (JSON Web Token) bilan foydalanuvchini autentifikatsiya qilish",
+    "19. Avtorizatsiya va Rolga asoslangan kirish nazorati (RBAC: Admin, O'qituvchi, O'quvchi)",
+    "20. Refresh Token va Access Token mexanizmi",
+    "21. Fayllarni serverga yuklash (Multer kutubxonasi)",
+    "22. Bulutli fayl saqlash: Cloudinary yoki AWS S3 integratsiyasi",
+    "23. Server xavfsizligi: Helmet, Rate Limiter, XSS va SQL Injectiondan himoya",
+    "24. Email xabarnomalar jo'natish (Nodemailer)",
+    "25. WebSocket va Socket.io bilan real-vaqt rejimida aloqa (Chat)",
+    "26. Fon vazifalari va rejalashtirish (Cron Jobs)",
+    "27. Keshlash tizimi: Redis asoslari",
+    "28. API hujjatlashtirish: Swagger / OpenAPI",
+    "29. Unit va Integration testlar: Jest / Supertest asoslari",
+    "30. Git jamoaviy ishlash va GitFlow",
+    "31. Docker asoslari: Dockerfile va Docker Compose bilan muhit yaratish",
+    "32. Serverni sozlash: Linux Ubuntu, Nginx Reverse Proxy va SSL sertifikat",
+    "33. Deploy: Loyihani Render / Railway yoki VPS serverga joylash",
+    "34. CI/CD asoslari: GitHub Actions bilan avtomatik deploy",
+    "35. Backend arxitekturasi: Clean Architecture va MVC strukturasi",
+    "36. Yakuniy diplom loyihasi: To'liq mustaqil Backend API tizimini himoya qilish"
+  ]
+};
+
+const DEFAULT_RATES = {
+  komp: { name: "Kompyuter savodxonligi", fee: 250000, teacherPercent: 50 },
+  it_foundation: { name: "IT dasturlash: Foundation", fee: 350000, teacherPercent: 50 },
+  it_frontend: { name: "IT dasturlash: Frontend", fee: 450000, teacherPercent: 50 },
+  it_backend: { name: "IT dasturlash: Backend", fee: 500000, teacherPercent: 50 },
+  indiv: { name: "Individual ta'lim", fee: 800000, teacherPercent: 60 }
+};
+
+const SEED_DATA = {"v":2,"updatedAt":"2026-10-26T09:18:18.014Z","auth":{"u":"admin4225","h":"pass4225_hash"},"settings":{"teacherName":"Katta O'qituvchi & Senior Dasturchi","teacherPhone":"+998901234567","teacherBasePercent":50,"rates":{"komp":{"name":"Kompyuter savodxonligi","fee":250000,"teacherPercent":50},"it_foundation":{"name":"IT dasturlash: Foundation","fee":350000,"teacherPercent":50},"it_frontend":{"name":"IT dasturlash: Frontend","fee":450000,"teacherPercent":50},"it_backend":{"name":"IT dasturlash: Backend","fee":500000,"teacherPercent":50},"indiv":{"name":"Individual ta'lim","fee":800000,"teacherPercent":60}},"github":{"token":"","gistId":"","autoSync":false,"lastSync":null}},"groups":[{"id":"weei4m4k1q","name":"F1","cat":"it_foundation","sched":"Toq kunlar: Du-Chor-Ju, 14:00","days":[0,2,4],"fee":350000,"teacherPercent":50,"start":"2026-09-01","end":"2026-11-30","plan":["1. Dasturlashga kirish, kompyuter mantig'i va binar sanoq tizimi","2. Algoritmlar tushunchasi va blok-sxemalar tuzish","3. Dasturlash muhitini sozlash (VS Code, terminal)","4. O'zgaruvchilar, xotira va ma'lumot turlari","5. Arifmetik va mantiqiy operatorlar","6. Shart operatorlari: if, else if, else","7. Tanlash operatori: switch-case va murakkab shartlar","8. Sikllar (Loops): for sikli va sanagichlar","9. Sikllar: while va do-while sikllari","10. Ichma-ich sikllar (Nested loops) va naqshlar","11. Funksiyalar: e'lon qilish, parametrlar va argumentlar","12. Funksiyalardan qiymat qaytarish (return) va scope","13. Massivlar (Arrays): indekslash va massiv bilan ishlash","14. Massivlar ustida amallar: yig'indi, minimum, maksimum","15. Satrlar (Strings) bilan ishlash va string metodlari","16. Ko'p o'lchamli massivlar va matritsalar","17. Qidiruv algoritmlari: Linear va Binary search","18. Saralash algoritmlari: Bubble sort va Quick sort","19. Rekursiya tushunchasi va rekursiv masalalar","20. OOP asoslari: Klasslar va Obyektlar","21. Konstruktorlar, metodlar va inkapsulyatsiya","22. Dasturdagi xatolarni tuzatish (Debugging)","23. Algoritmik masalalar (LeetCode / Codeforces)","24. Foundation bosqichi bo'yicha yakuniy sinov loyihasi"]},{"id":"8uvk6endxs","name":"F4-ertalab","cat":"it_foundation","sched":"Juft kunlar: Se-Pay-Sha, 09:00","days":[1,3,5],"fee":350000,"teacherPercent":50,"start":"2026-09-15","end":"2026-12-15","plan":["1. Dasturlashga kirish, kompyuter mantig'i va binar sanoq tizimi","2. Algoritmlar tushunchasi va blok-sxemalar tuzish","3. Dasturlash muhitini sozlash (VS Code, terminal)","4. O'zgaruvchilar, xotira va ma'lumot turlari","5. Arifmetik va mantiqiy operatorlar","6. Shart operatorlari: if, else if, else","7. Tanlash operatori: switch-case va murakkab shartlar","8. Sikllar (Loops): for sikli va sanagichlar","9. Sikllar: while va do-while sikllari","10. Ichma-ich sikllar (Nested loops) va naqshlar","11. Funksiyalar: e'lon qilish, parametrlar va argumentlar","12. Funksiyalardan qiymat qaytarish (return) va scope","13. Massivlar (Arrays): indekslash va massiv bilan ishlash","14. Massivlar ustida amallar: yig'indi, minimum, maksimum","15. Satrlar (Strings) bilan ishlash va string metodlari","16. Ko'p o'lchamli massivlar va matritsalar","17. Qidiruv algoritmlari: Linear va Binary search","18. Saralash algoritmlari: Bubble sort va Quick sort","19. Rekursiya tushunchasi va rekursiv masalalar","20. OOP asoslari: Klasslar va Obyektlar","21. Konstruktorlar, metodlar va inkapsulyatsiya","22. Dasturdagi xatolarni tuzatish (Debugging)","23. Algoritmik masalalar (LeetCode / Codeforces)","24. Foundation bosqichi bo'yicha yakuniy sinov loyihasi"]},{"id":"a9it95rdc4","name":"F4-abetdan keyin","cat":"it_foundation","sched":"Juft kunlar: Se-Pay-Sha, 14:00","days":[1,3,5],"fee":350000,"teacherPercent":50,"start":"2026-09-15","end":"2026-12-15","plan":["1. Dasturlashga kirish, kompyuter mantig'i va binar sanoq tizimi","2. Algoritmlar tushunchasi va blok-sxemalar tuzish","3. Dasturlash muhitini sozlash (VS Code, terminal)","4. O'zgaruvchilar, xotira va ma'lumot turlari","5. Arifmetik va mantiqiy operatorlar","6. Shart operatorlari: if, else if, else","7. Tanlash operatori: switch-case va murakkab shartlar","8. Sikllar (Loops): for sikli va sanagichlar","9. Sikllar: while va do-while sikllari","10. Ichma-ich sikllar (Nested loops) va naqshlar","11. Funksiyalar: e'lon qilish, parametrlar va argumentlar","12. Funksiyalardan qiymat qaytarish (return) va scope","13. Massivlar (Arrays): indekslash va massiv bilan ishlash","14. Massivlar ustida amallar: yig'indi, minimum, maksimum","15. Satrlar (Strings) bilan ishlash va string metodlari","16. Ko'p o'lchamli massivlar va matritsalar","17. Qidiruv algoritmlari: Linear va Binary search","18. Saralash algoritmlari: Bubble sort va Quick sort","19. Rekursiya tushunchasi va rekursiv masalalar","20. OOP asoslari: Klasslar va Obyektlar","21. Konstruktorlar, metodlar va inkapsulyatsiya","22. Dasturdagi xatolarni tuzatish (Debugging)","23. Algoritmik masalalar (LeetCode / Codeforces)","24. Foundation bosqichi bo'yicha yakuniy sinov loyihasi"]},{"id":"ajsot2nydj","name":"F5","cat":"it_foundation","sched":"Toq kunlar: Du-Chor-Ju, 16:00","days":[0,2,4],"fee":350000,"teacherPercent":50,"start":"2026-10-01","end":"2027-01-01","plan":["1. Dasturlashga kirish, kompyuter mantig'i va binar sanoq tizimi","2. Algoritmlar tushunchasi va blok-sxemalar tuzish","3. Dasturlash muhitini sozlash (VS Code, terminal)","4. O'zgaruvchilar, xotira va ma'lumot turlari","5. Arifmetik va mantiqiy operatorlar","6. Shart operatorlari: if, else if, else","7. Tanlash operatori: switch-case va murakkab shartlar","8. Sikllar (Loops): for sikli va sanagichlar","9. Sikllar: while va do-while sikllari","10. Ichma-ich sikllar (Nested loops) va naqshlar","11. Funksiyalar: e'lon qilish, parametrlar va argumentlar","12. Funksiyalardan qiymat qaytarish (return) va scope","13. Massivlar (Arrays): indekslash va massiv bilan ishlash","14. Massivlar ustida amallar: yig'indi, minimum, maksimum","15. Satrlar (Strings) bilan ishlash va string metodlari","16. Ko'p o'lchamli massivlar va matritsalar","17. Qidiruv algoritmlari: Linear va Binary search","18. Saralash algoritmlari: Bubble sort va Quick sort","19. Rekursiya tushunchasi va rekursiv masalalar","20. OOP asoslari: Klasslar va Obyektlar","21. Konstruktorlar, metodlar va inkapsulyatsiya","22. Dasturdagi xatolarni tuzatish (Debugging)","23. Algoritmik masalalar (LeetCode / Codeforces)","24. Foundation bosqichi bo'yicha yakuniy sinov loyihasi"]},{"id":"458mdddpa8","name":"KOMP-toq-11","cat":"komp","sched":"Toq kunlar: Du-Chor-Ju, 11:00","days":[0,2,4],"fee":250000,"teacherPercent":50,"start":"2026-09-01","end":"2026-11-01","plan":["1. Kompyuter qurilmalari, Windows interfeysi va sozlamalar","2. Klaviatura trenajyori, fayl va papkalar bilan to'g'ri ishlash","3. MS Word: Matn terish, shriftlar va abzas formatlash","4. MS Word: Jadvallar, rasmlar va shakllar bilan ishlash","5. MS Word: Hujjat tuzilishi, mundarija va sahifalash","6. MS Word: Rasmiy hujjatlar tayyorlash va chop etish","7. MS Word amaliy imtihon va mustaqil ish","8. MS Excel: Interfeys, kataklar, satr va ustunlar","9. MS Excel: Ma'lumot turlari va oddiy arifmetik amallar","10. MS Excel: Asosiy formulalar: SUM, AVERAGE, MIN, MAX, COUNT","11. MS Excel: Mantiqiy formulalar: IF, AND, OR, SUMIF","12. MS Excel: Diagrammalar, grafiklar va vizuallashtirish","13. MS Excel: Filtrlash, saralash (Sort & Filter) va shartli formatlash","14. MS Excel: VLOOKUP va zamonaviy XLOOKUP formulalari","15. MS Excel: Kassa va oylik hisobot jadvallari tuzish","16. MS Excel amaliy imtihon","17. MS PowerPoint: Taqdimot yaratish, slaydlar va dizayn","18. MS PowerPoint: Animatsiyalar va o'tish effektlari","19. MS PowerPoint: Professional taqdimot himoyasi","20. Internet, brauzerlar va axborot xavfsizligi","21. Elektron pochta (Gmail) va xat yozish etikasi","22. Bulutli xizmatlar: Google Drive, Docs va Sheets","23. Foydali utilitalar, arxivatorlar (WinRAR), PDF va Telegram","24. Yakuniy imtihon va sertifikatlash"]},{"id":"inlhgg2j3j","name":"KOMP-toq-14","cat":"komp","sched":"Toq kunlar: Du-Chor-Ju, 14:00","days":[0,2,4],"fee":250000,"teacherPercent":50,"start":"2026-09-01","end":"2026-11-01","plan":["1. Kompyuter qurilmalari, Windows interfeysi va sozlamalar","2. Klaviatura trenajyori, fayl va papkalar bilan to'g'ri ishlash","3. MS Word: Matn terish, shriftlar va abzas formatlash","4. MS Word: Jadvallar, rasmlar va shakllar bilan ishlash","5. MS Word: Hujjat tuzilishi, mundarija va sahifalash","6. MS Word: Rasmiy hujjatlar tayyorlash va chop etish","7. MS Word amaliy imtihon va mustaqil ish","8. MS Excel: Interfeys, kataklar, satr va ustunlar","9. MS Excel: Ma'lumot turlari va oddiy arifmetik amallar","10. MS Excel: Asosiy formulalar: SUM, AVERAGE, MIN, MAX, COUNT","11. MS Excel: Mantiqiy formulalar: IF, AND, OR, SUMIF","12. MS Excel: Diagrammalar, grafiklar va vizuallashtirish","13. MS Excel: Filtrlash, saralash (Sort & Filter) va shartli formatlash","14. MS Excel: VLOOKUP va zamonaviy XLOOKUP formulalari","15. MS Excel: Kassa va oylik hisobot jadvallari tuzish","16. MS Excel amaliy imtihon","17. MS PowerPoint: Taqdimot yaratish, slaydlar va dizayn","18. MS PowerPoint: Animatsiyalar va o'tish effektlari","19. MS PowerPoint: Professional taqdimot himoyasi","20. Internet, brauzerlar va axborot xavfsizligi","21. Elektron pochta (Gmail) va xat yozish etikasi","22. Bulutli xizmatlar: Google Drive, Docs va Sheets","23. Foydali utilitalar, arxivatorlar (WinRAR), PDF va Telegram","24. Yakuniy imtihon va sertifikatlash"]},{"id":"t361jjp90p","name":"KOMP-toq-16","cat":"komp","sched":"Toq kunlar: Du-Chor-Ju, 16:00","days":[0,2,4],"fee":250000,"teacherPercent":50,"start":"2026-09-01","end":"2026-11-01","plan":["1. Kompyuter qurilmalari, Windows interfeysi va sozlamalar","2. Klaviatura trenajyori, fayl va papkalar bilan to'g'ri ishlash","3. MS Word: Matn terish, shriftlar va abzas formatlash","4. MS Word: Jadvallar, rasmlar va shakllar bilan ishlash","5. MS Word: Hujjat tuzilishi, mundarija va sahifalash","6. MS Word: Rasmiy hujjatlar tayyorlash va chop etish","7. MS Word amaliy imtihon va mustaqil ish","8. MS Excel: Interfeys, kataklar, satr va ustunlar","9. MS Excel: Ma'lumot turlari va oddiy arifmetik amallar","10. MS Excel: Asosiy formulalar: SUM, AVERAGE, MIN, MAX, COUNT","11. MS Excel: Mantiqiy formulalar: IF, AND, OR, SUMIF","12. MS Excel: Diagrammalar, grafiklar va vizuallashtirish","13. MS Excel: Filtrlash, saralash (Sort & Filter) va shartli formatlash","14. MS Excel: VLOOKUP va zamonaviy XLOOKUP formulalari","15. MS Excel: Kassa va oylik hisobot jadvallari tuzish","16. MS Excel amaliy imtihon","17. MS PowerPoint: Taqdimot yaratish, slaydlar va dizayn","18. MS PowerPoint: Animatsiyalar va o'tish effektlari","19. MS PowerPoint: Professional taqdimot himoyasi","20. Internet, brauzerlar va axborot xavfsizligi","21. Elektron pochta (Gmail) va xat yozish etikasi","22. Bulutli xizmatlar: Google Drive, Docs va Sheets","23. Foydali utilitalar, arxivatorlar (WinRAR), PDF va Telegram","24. Yakuniy imtihon va sertifikatlash"]},{"id":"krf13aoar4","name":"KOMP-INDIVIDUAL-18","cat":"indiv","sched":"Individual: Du-Chor-Ju, 18:00","days":[0,2,4],"fee":800000,"teacherPercent":60,"start":"2026-10-01","end":"2026-11-30","plan":["1. Kompyuter qurilmalari, Windows interfeysi va sozlamalar","2. Klaviatura trenajyori, fayl va papkalar bilan to'g'ri ishlash","3. MS Word: Matn terish, shriftlar va abzas formatlash","4. MS Word: Jadvallar, rasmlar va shakllar bilan ishlash","5. MS Word: Hujjat tuzilishi, mundarija va sahifalash","6. MS Word: Rasmiy hujjatlar tayyorlash va chop etish","7. MS Word amaliy imtihon va mustaqil ish","8. MS Excel: Interfeys, kataklar, satr va ustunlar","9. MS Excel: Ma'lumot turlari va oddiy arifmetik amallar","10. MS Excel: Asosiy formulalar: SUM, AVERAGE, MIN, MAX, COUNT","11. MS Excel: Mantiqiy formulalar: IF, AND, OR, SUMIF","12. MS Excel: Diagrammalar, grafiklar va vizuallashtirish","13. MS Excel: Filtrlash, saralash (Sort & Filter) va shartli formatlash","14. MS Excel: VLOOKUP va zamonaviy XLOOKUP formulalari","15. MS Excel: Kassa va oylik hisobot jadvallari tuzish","16. MS Excel amaliy imtihon","17. MS PowerPoint: Taqdimot yaratish, slaydlar va dizayn","18. MS PowerPoint: Animatsiyalar va o'tish effektlari","19. MS PowerPoint: Professional taqdimot himoyasi","20. Internet, brauzerlar va axborot xavfsizligi","21. Elektron pochta (Gmail) va xat yozish etikasi","22. Bulutli xizmatlar: Google Drive, Docs va Sheets","23. Foydali utilitalar, arxivatorlar (WinRAR), PDF va Telegram","24. Yakuniy imtihon va sertifikatlash"]},{"id":"fmh2f944zl","name":"KOMP-juft-11","cat":"komp","sched":"Juft kunlar: Se-Pay-Sha, 11:00","days":[1,3,5],"fee":250000,"teacherPercent":50,"start":"2026-09-15","end":"2026-11-15","plan":["1. Kompyuter qurilmalari, Windows interfeysi va sozlamalar","2. Klaviatura trenajyori, fayl va papkalar bilan to'g'ri ishlash","3. MS Word: Matn terish, shriftlar va abzas formatlash","4. MS Word: Jadvallar, rasmlar va shakllar bilan ishlash","5. MS Word: Hujjat tuzilishi, mundarija va sahifalash","6. MS Word: Rasmiy hujjatlar tayyorlash va chop etish","7. MS Word amaliy imtihon va mustaqil ish","8. MS Excel: Interfeys, kataklar, satr va ustunlar","9. MS Excel: Ma'lumot turlari va oddiy arifmetik amallar","10. MS Excel: Asosiy formulalar: SUM, AVERAGE, MIN, MAX, COUNT","11. MS Excel: Mantiqiy formulalar: IF, AND, OR, SUMIF","12. MS Excel: Diagrammalar, grafiklar va vizuallashtirish","13. MS Excel: Filtrlash, saralash (Sort & Filter) va shartli formatlash","14. MS Excel: VLOOKUP va zamonaviy XLOOKUP formulalari","15. MS Excel: Kassa va oylik hisobot jadvallari tuzish","16. MS Excel amaliy imtihon","17. MS PowerPoint: Taqdimot yaratish, slaydlar va dizayn","18. MS PowerPoint: Animatsiyalar va o'tish effektlari","19. MS PowerPoint: Professional taqdimot himoyasi","20. Internet, brauzerlar va axborot xavfsizligi","21. Elektron pochta (Gmail) va xat yozish etikasi","22. Bulutli xizmatlar: Google Drive, Docs va Sheets","23. Foydali utilitalar, arxivatorlar (WinRAR), PDF va Telegram","24. Yakuniy imtihon va sertifikatlash"]},{"id":"6qf9bmkq72","name":"KOMP-shanba-11","cat":"komp","sched":"Hafta oxiri: Shanba-Yakshanba, 11:00","days":[5,6],"fee":250000,"teacherPercent":50,"start":"2026-10-01","end":"2026-12-01","plan":["1. Kompyuter qurilmalari, Windows interfeysi va sozlamalar","2. Klaviatura trenajyori, fayl va papkalar bilan to'g'ri ishlash","3. MS Word: Matn terish, shriftlar va abzas formatlash","4. MS Word: Jadvallar, rasmlar va shakllar bilan ishlash","5. MS Word: Hujjat tuzilishi, mundarija va sahifalash","6. MS Word: Rasmiy hujjatlar tayyorlash va chop etish","7. MS Word amaliy imtihon va mustaqil ish","8. MS Excel: Interfeys, kataklar, satr va ustunlar","9. MS Excel: Ma'lumot turlari va oddiy arifmetik amallar","10. MS Excel: Asosiy formulalar: SUM, AVERAGE, MIN, MAX, COUNT","11. MS Excel: Mantiqiy formulalar: IF, AND, OR, SUMIF","12. MS Excel: Diagrammalar, grafiklar va vizuallashtirish","13. MS Excel: Filtrlash, saralash (Sort & Filter) va shartli formatlash","14. MS Excel: VLOOKUP va zamonaviy XLOOKUP formulalari","15. MS Excel: Kassa va oylik hisobot jadvallari tuzish","16. MS Excel amaliy imtihon","17. MS PowerPoint: Taqdimot yaratish, slaydlar va dizayn","18. MS PowerPoint: Animatsiyalar va o'tish effektlari","19. MS PowerPoint: Professional taqdimot himoyasi","20. Internet, brauzerlar va axborot xavfsizligi","21. Elektron pochta (Gmail) va xat yozish etikasi","22. Bulutli xizmatlar: Google Drive, Docs va Sheets","23. Foydali utilitalar, arxivatorlar (WinRAR), PDF va Telegram","24. Yakuniy imtihon va sertifikatlash"]}],"students":[{"id":"pmt06y00c6","name":"Abduazimov Sarvar","g":"inlhgg2j3j","phone":"+998941440509","rateType":"komp","fee":null,"payMode":"standard","monthStatus":{},"at":"2026-09-01"},{"id":"9nreegb81g","name":"Abduqodirov Yusufjon","g":"a9it95rdc4","phone":"","rateType":"it_foundation","fee":null,"payMode":"standard","monthStatus":{},"at":"2026-09-01"},{"id":"rokrcq6zqu","name":"Abduvaliyev Bobur","g":"inlhgg2j3j","phone":"+998882581408","rateType":"komp","fee":null,"payMode":"standard","monthStatus":{},"at":"2026-09-01"},{"id":"jd5vw1i9ny","name":"Abduvohidova Gulhayo","g":"fmh2f944zl","phone":"","rateType":"komp","fee":null,"payMode":"standard","monthStatus":{},"at":"2026-09-01"},{"id":"a4prl3phgk","name":"Alijonov Muhammadjon","g":"8uvk6endxs","phone":"+998952900500","rateType":"it_foundation","fee":null,"payMode":"standard","monthStatus":{},"at":"2026-09-01"},{"id":"11t4x837n8","name":"Ashurov Alpomish","g":"weei4m4k1q","phone":"","rateType":"it_foundation","fee":null,"payMode":"standard","monthStatus":{},"at":"2026-09-01"},{"id":"q5iguu61qw","name":"Asilbekova Etibor","g":"6qf9bmkq72","phone":"+998902382606","rateType":"komp","fee":null,"payMode":"standard","monthStatus":{},"at":"2026-09-01"},{"id":"6rs3th2uvw","name":"Axmedov Lochinbek","g":"ajsot2nydj","phone":"","rateType":"it_foundation","fee":null,"payMode":"standard","monthStatus":{},"at":"2026-09-01"},{"id":"3t872bb0lg","name":"Bozorov Xolmurod","g":"ajsot2nydj","phone":"","rateType":"it_foundation","fee":null,"payMode":"standard","monthStatus":{},"at":"2026-09-01"},{"id":"94gzzvvp0s","name":"Erbotayev Umarjon","g":"a9it95rdc4","phone":"","rateType":"it_foundation","fee":null,"payMode":"standard","monthStatus":{},"at":"2026-09-01"},{"id":"g0al9tbblo","name":"G'aniyeva Munisa","g":"6qf9bmkq72","phone":"+998949051901","rateType":"komp","fee":null,"payMode":"standard","monthStatus":{},"at":"2026-09-01"},{"id":"afkrv9uiq4","name":"G'ulomboyev Elbek","g":"weei4m4k1q","phone":"","rateType":"it_foundation","fee":null,"payMode":"standard","monthStatus":{},"at":"2026-09-01"},{"id":"xrrj6o88ek","name":"G'ulomova Sevinch","g":"t361jjp90p","phone":"+998772517805","rateType":"komp","fee":null,"payMode":"standard","monthStatus":{},"at":"2026-09-01"},{"id":"1yogjll66c","name":"Ganijonov Rustambek","g":"ajsot2nydj","phone":"","rateType":"it_foundation","fee":null,"payMode":"standard","monthStatus":{},"at":"2026-09-01"},{"id":"6ajesnhk9j","name":"Gasimova Shaxnoza","g":"458mdddpa8","phone":"+998994363246","rateType":"komp","fee":null,"payMode":"standard","monthStatus":{},"at":"2026-09-01"},{"id":"nuz69i3vax","name":"Imomova Muxlisa","g":"inlhgg2j3j","phone":"+998970200230","rateType":"komp","fee":null,"payMode":"standard","monthStatus":{},"at":"2026-09-01"},{"id":"wiv36m2vq6","name":"Joraqulova Xumora","g":"458mdddpa8","phone":"","rateType":"komp","fee":null,"payMode":"standard","monthStatus":{},"at":"2026-09-01"},{"id":"mvazdqc7c4","name":"Jorayev Shoxjaxon","g":"8uvk6endxs","phone":"","rateType":"it_foundation","fee":null,"payMode":"standard","monthStatus":{},"at":"2026-09-01"},{"id":"5wp4nvjd7o","name":"Karimova Solixa","g":"8uvk6endxs","phone":"+998979068182","rateType":"it_foundation","fee":null,"payMode":"standard","monthStatus":{},"at":"2026-09-01"},{"id":"0nx8qbz7la","name":"Kuliyeva Mashhura","g":"458mdddpa8","phone":"+998974941020","rateType":"komp","fee":null,"payMode":"standard","monthStatus":{},"at":"2026-09-01"},{"id":"3xn3r8zk6a","name":"Mamirov Ravshanbek","g":"a9it95rdc4","phone":"","rateType":"it_foundation","fee":null,"payMode":"standard","monthStatus":{},"at":"2026-09-01"},{"id":"o1dwqyp2oz","name":"Odiljonova Fotima","g":"t361jjp90p","phone":"+998704747670","rateType":"komp","fee":null,"payMode":"standard","monthStatus":{},"at":"2026-09-01"},{"id":"xxi3d4rt6v","name":"Odiljonova Muborak","g":"fmh2f944zl","phone":"","rateType":"komp","fee":null,"payMode":"standard","monthStatus":{},"at":"2026-09-01"},{"id":"5diuwbtaw4","name":"Odiljonova Zaxro","g":"t361jjp90p","phone":"+998990328958","rateType":"komp","fee":null,"payMode":"standard","monthStatus":{},"at":"2026-09-01"},{"id":"ff3qoawi8c","name":"Odiljonova Zuxra","g":"t361jjp90p","phone":"+998771640470","rateType":"komp","fee":null,"payMode":"standard","monthStatus":{},"at":"2026-09-01"},{"id":"lhrkrn9sqk","name":"Oripov Jahongir","g":"a9it95rdc4","phone":"","rateType":"it_foundation","fee":null,"payMode":"standard","monthStatus":{},"at":"2026-09-01"},{"id":"63uehfs090","name":"Orziqulov Sardorbek","g":"8uvk6endxs","phone":"","rateType":"it_foundation","fee":null,"payMode":"standard","monthStatus":{},"at":"2026-09-01"},{"id":"63sse97lwg","name":"Pirimqulov Muzaffar","g":"inlhgg2j3j","phone":"+998950568604","rateType":"komp","fee":null,"payMode":"standard","monthStatus":{},"at":"2026-09-01"},{"id":"0xcwpapczv","name":"Qodiraliyev Murodjon","g":"a9it95rdc4","phone":"","rateType":"it_foundation","fee":null,"payMode":"standard","monthStatus":{},"at":"2026-09-01"},{"id":"hzxzzdsn5n","name":"Qodirjonov Asadbek","g":"8uvk6endxs","phone":"","rateType":"it_foundation","fee":null,"payMode":"standard","monthStatus":{},"at":"2026-09-01"},{"id":"7bxcmm79st","name":"Rahmonova Iroda","g":"fmh2f944zl","phone":"","rateType":"komp","fee":null,"payMode":"standard","monthStatus":{},"at":"2026-09-01"},{"id":"982xophg29","name":"Shirinova Maftuna","g":"fmh2f944zl","phone":"","rateType":"komp","fee":null,"payMode":"standard","monthStatus":{},"at":"2026-09-01"},{"id":"5l3xfvkuqk","name":"Shodibekov Nurmuhammad","g":"8uvk6endxs","phone":"","rateType":"it_foundation","fee":null,"payMode":"standard","monthStatus":{},"at":"2026-09-01"},{"id":"lullfz1gb7","name":"Soatova Sevinch","g":"6qf9bmkq72","phone":"+998937876469","rateType":"komp","fee":null,"payMode":"standard","monthStatus":{},"at":"2026-09-01"},{"id":"49rjdapcbg","name":"Temurboyev Umidjon","g":"ajsot2nydj","phone":"","rateType":"it_foundation","fee":null,"payMode":"standard","monthStatus":{},"at":"2026-09-01"},{"id":"423pkpai2k","name":"Tojimirzayev Nodir","g":"ajsot2nydj","phone":"","rateType":"it_foundation","fee":null,"payMode":"standard","monthStatus":{},"at":"2026-09-01"},{"id":"j710ejjmmc","name":"Tora Olimjon","g":"ajsot2nydj","phone":"","rateType":"it_foundation","fee":null,"payMode":"standard","monthStatus":{},"at":"2026-09-01"},{"id":"c3op2qeo2j","name":"Toshpolatov Xudoyor","g":"weei4m4k1q","phone":"","rateType":"it_foundation","fee":null,"payMode":"standard","monthStatus":{},"at":"2026-09-01"},{"id":"274fg2kqjo","name":"Ubatova Zilola","g":"t361jjp90p","phone":"","rateType":"komp","fee":null,"payMode":"standard","monthStatus":{},"at":"2026-09-01"},{"id":"mu4ide3dey","name":"Umarxo'jayev Sodir","g":"inlhgg2j3j","phone":"+998990125744","rateType":"komp","fee":null,"payMode":"standard","monthStatus":{},"at":"2026-09-01"},{"id":"2nnd3cs2as","name":"Umirzoqov Xondamir","g":"inlhgg2j3j","phone":"+998777282004","rateType":"komp","fee":null,"payMode":"standard","monthStatus":{},"at":"2026-09-01"},{"id":"j0rfem33te","name":"Ungarova Ruxsora","g":"krf13aoar4","phone":"","rateType":"indiv","fee":null,"payMode":"standard","monthStatus":{},"at":"2026-09-01"},{"id":"nitk2qjmbd","name":"Xayrullayeva Nilufar","g":"458mdddpa8","phone":"+998931652624","rateType":"komp","fee":null,"payMode":"standard","monthStatus":{},"at":"2026-09-01"}],"lessons":[{"id":"les_weei4m4k1q_0","g":"weei4m4k1q","date":"2026-10-05","topic":"1. Dasturlashga kirish, kompyuter mantig'i va binar sanoq tizimi","note":"Dars reja asosida o'tildi.","att":{"11t4x837n8":"p","afkrv9uiq4":"p","c3op2qeo2j":"p"},"files":[]},{"id":"les_weei4m4k1q_1","g":"weei4m4k1q","date":"2026-10-07","topic":"2. Algoritmlar tushunchasi va blok-sxemalar tuzish","note":"Dars reja asosida o'tildi.","att":{"11t4x837n8":"p","afkrv9uiq4":"p","c3op2qeo2j":"p"},"files":[]},{"id":"les_weei4m4k1q_2","g":"weei4m4k1q","date":"2026-10-09","topic":"3. Dasturlash muhitini sozlash (VS Code, terminal)","note":"Dars reja asosida o'tildi.","att":{"11t4x837n8":"a","afkrv9uiq4":"p","c3op2qeo2j":"p"},"files":[]},{"id":"les_weei4m4k1q_3","g":"weei4m4k1q","date":"2026-10-12","topic":"4. O'zgaruvchilar, xotira va ma'lumot turlari","note":"Dars reja asosida o'tildi.","att":{"11t4x837n8":"p","afkrv9uiq4":"p","c3op2qeo2j":"p"},"files":[]},{"id":"les_weei4m4k1q_4","g":"weei4m4k1q","date":"2026-10-14","topic":"5. Arifmetik va mantiqiy operatorlar","note":"Dars reja asosida o'tildi.","att":{"11t4x837n8":"p","afkrv9uiq4":"p","c3op2qeo2j":"p"},"files":[]},{"id":"les_weei4m4k1q_5","g":"weei4m4k1q","date":"2026-10-16","topic":"6. Shart operatorlari: if, else if, else","note":"Dars reja asosida o'tildi.","att":{"11t4x837n8":"p","afkrv9uiq4":"p","c3op2qeo2j":"p"},"files":[]},{"id":"les_weei4m4k1q_6","g":"weei4m4k1q","date":"2026-10-19","topic":"7. Tanlash operatori: switch-case va murakkab shartlar","note":"Dars reja asosida o'tildi.","att":{"11t4x837n8":"p","afkrv9uiq4":"p","c3op2qeo2j":"p"},"files":[]},{"id":"les_8uvk6endxs_0","g":"8uvk6endxs","date":"2026-10-06","topic":"1. Dasturlashga kirish, kompyuter mantig'i va binar sanoq tizimi","note":"Dars reja asosida o'tildi.","att":{"a4prl3phgk":"p","mvazdqc7c4":"p","5wp4nvjd7o":"p","63uehfs090":"p","hzxzzdsn5n":"p","5l3xfvkuqk":"p"},"files":[]},{"id":"les_8uvk6endxs_1","g":"8uvk6endxs","date":"2026-10-08","topic":"2. Algoritmlar tushunchasi va blok-sxemalar tuzish","note":"Dars reja asosida o'tildi.","att":{"a4prl3phgk":"p","mvazdqc7c4":"p","5wp4nvjd7o":"p","63uehfs090":"p","hzxzzdsn5n":"p","5l3xfvkuqk":"p"},"files":[]},{"id":"les_8uvk6endxs_2","g":"8uvk6endxs","date":"2026-10-10","topic":"3. Dasturlash muhitini sozlash (VS Code, terminal)","note":"Dars reja asosida o'tildi.","att":{"a4prl3phgk":"a","mvazdqc7c4":"p","5wp4nvjd7o":"p","63uehfs090":"p","hzxzzdsn5n":"p","5l3xfvkuqk":"p"},"files":[]},{"id":"les_8uvk6endxs_3","g":"8uvk6endxs","date":"2026-10-13","topic":"4. O'zgaruvchilar, xotira va ma'lumot turlari","note":"Dars reja asosida o'tildi.","att":{"a4prl3phgk":"p","mvazdqc7c4":"p","5wp4nvjd7o":"p","63uehfs090":"p","hzxzzdsn5n":"p","5l3xfvkuqk":"p"},"files":[]},{"id":"les_8uvk6endxs_4","g":"8uvk6endxs","date":"2026-10-15","topic":"5. Arifmetik va mantiqiy operatorlar","note":"Dars reja asosida o'tildi.","att":{"a4prl3phgk":"p","mvazdqc7c4":"p","5wp4nvjd7o":"p","63uehfs090":"e","hzxzzdsn5n":"p","5l3xfvkuqk":"p"},"files":[]},{"id":"les_8uvk6endxs_5","g":"8uvk6endxs","date":"2026-10-17","topic":"6. Shart operatorlari: if, else if, else","note":"Dars reja asosida o'tildi.","att":{"a4prl3phgk":"p","mvazdqc7c4":"p","5wp4nvjd7o":"p","63uehfs090":"p","hzxzzdsn5n":"p","5l3xfvkuqk":"p"},"files":[]},{"id":"les_8uvk6endxs_6","g":"8uvk6endxs","date":"2026-10-20","topic":"7. Tanlash operatori: switch-case va murakkab shartlar","note":"Dars reja asosida o'tildi.","att":{"a4prl3phgk":"p","mvazdqc7c4":"p","5wp4nvjd7o":"p","63uehfs090":"p","hzxzzdsn5n":"p","5l3xfvkuqk":"p"},"files":[]},{"id":"les_a9it95rdc4_0","g":"a9it95rdc4","date":"2026-10-06","topic":"1. Dasturlashga kirish, kompyuter mantig'i va binar sanoq tizimi","note":"Dars reja asosida o'tildi.","att":{"9nreegb81g":"p","94gzzvvp0s":"p","3xn3r8zk6a":"p","lhrkrn9sqk":"p","0xcwpapczv":"p"},"files":[]},{"id":"les_a9it95rdc4_1","g":"a9it95rdc4","date":"2026-10-08","topic":"2. Algoritmlar tushunchasi va blok-sxemalar tuzish","note":"Dars reja asosida o'tildi.","att":{"9nreegb81g":"p","94gzzvvp0s":"p","3xn3r8zk6a":"p","lhrkrn9sqk":"p","0xcwpapczv":"p"},"files":[]},{"id":"les_a9it95rdc4_2","g":"a9it95rdc4","date":"2026-10-10","topic":"3. Dasturlash muhitini sozlash (VS Code, terminal)","note":"Dars reja asosida o'tildi.","att":{"9nreegb81g":"a","94gzzvvp0s":"p","3xn3r8zk6a":"p","lhrkrn9sqk":"p","0xcwpapczv":"p"},"files":[]},{"id":"les_a9it95rdc4_3","g":"a9it95rdc4","date":"2026-10-13","topic":"4. O'zgaruvchilar, xotira va ma'lumot turlari","note":"Dars reja asosida o'tildi.","att":{"9nreegb81g":"p","94gzzvvp0s":"p","3xn3r8zk6a":"p","lhrkrn9sqk":"p","0xcwpapczv":"p"},"files":[]},{"id":"les_a9it95rdc4_4","g":"a9it95rdc4","date":"2026-10-15","topic":"5. Arifmetik va mantiqiy operatorlar","note":"Dars reja asosida o'tildi.","att":{"9nreegb81g":"p","94gzzvvp0s":"p","3xn3r8zk6a":"p","lhrkrn9sqk":"e","0xcwpapczv":"p"},"files":[]},{"id":"les_a9it95rdc4_5","g":"a9it95rdc4","date":"2026-10-17","topic":"6. Shart operatorlari: if, else if, else","note":"Dars reja asosida o'tildi.","att":{"9nreegb81g":"p","94gzzvvp0s":"p","3xn3r8zk6a":"p","lhrkrn9sqk":"p","0xcwpapczv":"p"},"files":[]},{"id":"les_a9it95rdc4_6","g":"a9it95rdc4","date":"2026-10-20","topic":"7. Tanlash operatori: switch-case va murakkab shartlar","note":"Dars reja asosida o'tildi.","att":{"9nreegb81g":"p","94gzzvvp0s":"p","3xn3r8zk6a":"p","lhrkrn9sqk":"p","0xcwpapczv":"p"},"files":[]},{"id":"les_ajsot2nydj_0","g":"ajsot2nydj","date":"2026-10-05","topic":"1. Dasturlashga kirish, kompyuter mantig'i va binar sanoq tizimi","note":"Dars reja asosida o'tildi.","att":{"6rs3th2uvw":"p","3t872bb0lg":"p","1yogjll66c":"p","49rjdapcbg":"p","423pkpai2k":"p","j710ejjmmc":"p"},"files":[]},{"id":"les_ajsot2nydj_1","g":"ajsot2nydj","date":"2026-10-07","topic":"2. Algoritmlar tushunchasi va blok-sxemalar tuzish","note":"Dars reja asosida o'tildi.","att":{"6rs3th2uvw":"p","3t872bb0lg":"p","1yogjll66c":"p","49rjdapcbg":"p","423pkpai2k":"p","j710ejjmmc":"p"},"files":[]},{"id":"les_ajsot2nydj_2","g":"ajsot2nydj","date":"2026-10-09","topic":"3. Dasturlash muhitini sozlash (VS Code, terminal)","note":"Dars reja asosida o'tildi.","att":{"6rs3th2uvw":"a","3t872bb0lg":"p","1yogjll66c":"p","49rjdapcbg":"p","423pkpai2k":"p","j710ejjmmc":"p"},"files":[]},{"id":"les_ajsot2nydj_3","g":"ajsot2nydj","date":"2026-10-12","topic":"4. O'zgaruvchilar, xotira va ma'lumot turlari","note":"Dars reja asosida o'tildi.","att":{"6rs3th2uvw":"p","3t872bb0lg":"p","1yogjll66c":"p","49rjdapcbg":"p","423pkpai2k":"p","j710ejjmmc":"p"},"files":[]},{"id":"les_ajsot2nydj_4","g":"ajsot2nydj","date":"2026-10-14","topic":"5. Arifmetik va mantiqiy operatorlar","note":"Dars reja asosida o'tildi.","att":{"6rs3th2uvw":"p","3t872bb0lg":"p","1yogjll66c":"p","49rjdapcbg":"p","423pkpai2k":"p","j710ejjmmc":"p"},"files":[]},{"id":"les_ajsot2nydj_5","g":"ajsot2nydj","date":"2026-10-16","topic":"6. Shart operatorlari: if, else if, else","note":"Dars reja asosida o'tildi.","att":{"6rs3th2uvw":"p","3t872bb0lg":"p","1yogjll66c":"p","49rjdapcbg":"p","423pkpai2k":"p","j710ejjmmc":"p"},"files":[]},{"id":"les_ajsot2nydj_6","g":"ajsot2nydj","date":"2026-10-19","topic":"7. Tanlash operatori: switch-case va murakkab shartlar","note":"Dars reja asosida o'tildi.","att":{"6rs3th2uvw":"p","3t872bb0lg":"p","1yogjll66c":"p","49rjdapcbg":"p","423pkpai2k":"p","j710ejjmmc":"p"},"files":[]},{"id":"les_458mdddpa8_0","g":"458mdddpa8","date":"2026-10-05","topic":"1. Kompyuter qurilmalari, Windows interfeysi va sozlamalar","note":"Dars reja asosida o'tildi.","att":{"6ajesnhk9j":"p","wiv36m2vq6":"p","0nx8qbz7la":"p","nitk2qjmbd":"p"},"files":[]},{"id":"les_458mdddpa8_1","g":"458mdddpa8","date":"2026-10-07","topic":"2. Klaviatura trenajyori, fayl va papkalar bilan to'g'ri ishlash","note":"Dars reja asosida o'tildi.","att":{"6ajesnhk9j":"p","wiv36m2vq6":"p","0nx8qbz7la":"p","nitk2qjmbd":"p"},"files":[]},{"id":"les_458mdddpa8_2","g":"458mdddpa8","date":"2026-10-09","topic":"3. MS Word: Matn terish, shriftlar va abzas formatlash","note":"Dars reja asosida o'tildi.","att":{"6ajesnhk9j":"p","wiv36m2vq6":"p","0nx8qbz7la":"p","nitk2qjmbd":"p"},"files":[]},{"id":"les_458mdddpa8_3","g":"458mdddpa8","date":"2026-10-12","topic":"4. MS Word: Jadvallar, rasmlar va shakllar bilan ishlash","note":"Dars reja asosida o'tildi.","att":{"6ajesnhk9j":"p","wiv36m2vq6":"p","0nx8qbz7la":"p","nitk2qjmbd":"p"},"files":[]},{"id":"les_458mdddpa8_4","g":"458mdddpa8","date":"2026-10-14","topic":"5. MS Word: Hujjat tuzilishi, mundarija va sahifalash","note":"Dars reja asosida o'tildi.","att":{"6ajesnhk9j":"p","wiv36m2vq6":"p","0nx8qbz7la":"p","nitk2qjmbd":"p"},"files":[]},{"id":"les_458mdddpa8_5","g":"458mdddpa8","date":"2026-10-16","topic":"6. MS Word: Rasmiy hujjatlar tayyorlash va chop etish","note":"Dars reja asosida o'tildi.","att":{"6ajesnhk9j":"p","wiv36m2vq6":"p","0nx8qbz7la":"p","nitk2qjmbd":"p"},"files":[]},{"id":"les_458mdddpa8_6","g":"458mdddpa8","date":"2026-10-19","topic":"7. MS Word amaliy imtihon va mustaqil ish","note":"Dars reja asosida o'tildi.","att":{"6ajesnhk9j":"p","wiv36m2vq6":"p","0nx8qbz7la":"p","nitk2qjmbd":"p"},"files":[]},{"id":"les_inlhgg2j3j_0","g":"inlhgg2j3j","date":"2026-10-05","topic":"1. Kompyuter qurilmalari, Windows interfeysi va sozlamalar","note":"Dars reja asosida o'tildi.","att":{"pmt06y00c6":"p","rokrcq6zqu":"p","nuz69i3vax":"p","63sse97lwg":"p","mu4ide3dey":"p","2nnd3cs2as":"p"},"files":[]},{"id":"les_inlhgg2j3j_1","g":"inlhgg2j3j","date":"2026-10-07","topic":"2. Klaviatura trenajyori, fayl va papkalar bilan to'g'ri ishlash","note":"Dars reja asosida o'tildi.","att":{"pmt06y00c6":"p","rokrcq6zqu":"p","nuz69i3vax":"p","63sse97lwg":"p","mu4ide3dey":"p","2nnd3cs2as":"p"},"files":[]},{"id":"les_inlhgg2j3j_2","g":"inlhgg2j3j","date":"2026-10-09","topic":"3. MS Word: Matn terish, shriftlar va abzas formatlash","note":"Dars reja asosida o'tildi.","att":{"pmt06y00c6":"a","rokrcq6zqu":"a","nuz69i3vax":"p","63sse97lwg":"p","mu4ide3dey":"p","2nnd3cs2as":"p"},"files":[]},{"id":"les_inlhgg2j3j_3","g":"inlhgg2j3j","date":"2026-10-12","topic":"4. MS Word: Jadvallar, rasmlar va shakllar bilan ishlash","note":"Dars reja asosida o'tildi.","att":{"pmt06y00c6":"p","rokrcq6zqu":"p","nuz69i3vax":"p","63sse97lwg":"p","mu4ide3dey":"p","2nnd3cs2as":"p"},"files":[]},{"id":"les_inlhgg2j3j_4","g":"inlhgg2j3j","date":"2026-10-14","topic":"5. MS Word: Hujjat tuzilishi, mundarija va sahifalash","note":"Dars reja asosida o'tildi.","att":{"pmt06y00c6":"p","rokrcq6zqu":"p","nuz69i3vax":"p","63sse97lwg":"p","mu4ide3dey":"p","2nnd3cs2as":"p"},"files":[]},{"id":"les_inlhgg2j3j_5","g":"inlhgg2j3j","date":"2026-10-16","topic":"6. MS Word: Rasmiy hujjatlar tayyorlash va chop etish","note":"Dars reja asosida o'tildi.","att":{"pmt06y00c6":"p","rokrcq6zqu":"p","nuz69i3vax":"p","63sse97lwg":"p","mu4ide3dey":"p","2nnd3cs2as":"p"},"files":[]},{"id":"les_inlhgg2j3j_6","g":"inlhgg2j3j","date":"2026-10-19","topic":"7. MS Word amaliy imtihon va mustaqil ish","note":"Dars reja asosida o'tildi.","att":{"pmt06y00c6":"p","rokrcq6zqu":"p","nuz69i3vax":"p","63sse97lwg":"p","mu4ide3dey":"p","2nnd3cs2as":"p"},"files":[]},{"id":"les_t361jjp90p_0","g":"t361jjp90p","date":"2026-10-05","topic":"1. Kompyuter qurilmalari, Windows interfeysi va sozlamalar","note":"Dars reja asosida o'tildi.","att":{"xrrj6o88ek":"p","o1dwqyp2oz":"p","5diuwbtaw4":"p","ff3qoawi8c":"p","274fg2kqjo":"p"},"files":[]},{"id":"les_t361jjp90p_1","g":"t361jjp90p","date":"2026-10-07","topic":"2. Klaviatura trenajyori, fayl va papkalar bilan to'g'ri ishlash","note":"Dars reja asosida o'tildi.","att":{"xrrj6o88ek":"p","o1dwqyp2oz":"p","5diuwbtaw4":"p","ff3qoawi8c":"p","274fg2kqjo":"p"},"files":[]},{"id":"les_t361jjp90p_2","g":"t361jjp90p","date":"2026-10-09","topic":"3. MS Word: Matn terish, shriftlar va abzas formatlash","note":"Dars reja asosida o'tildi.","att":{"xrrj6o88ek":"p","o1dwqyp2oz":"p","5diuwbtaw4":"p","ff3qoawi8c":"p","274fg2kqjo":"p"},"files":[]},{"id":"les_t361jjp90p_3","g":"t361jjp90p","date":"2026-10-12","topic":"4. MS Word: Jadvallar, rasmlar va shakllar bilan ishlash","note":"Dars reja asosida o'tildi.","att":{"xrrj6o88ek":"p","o1dwqyp2oz":"p","5diuwbtaw4":"p","ff3qoawi8c":"p","274fg2kqjo":"p"},"files":[]},{"id":"les_t361jjp90p_4","g":"t361jjp90p","date":"2026-10-14","topic":"5. MS Word: Hujjat tuzilishi, mundarija va sahifalash","note":"Dars reja asosida o'tildi.","att":{"xrrj6o88ek":"p","o1dwqyp2oz":"e","5diuwbtaw4":"e","ff3qoawi8c":"e","274fg2kqjo":"p"},"files":[]},{"id":"les_t361jjp90p_5","g":"t361jjp90p","date":"2026-10-16","topic":"6. MS Word: Rasmiy hujjatlar tayyorlash va chop etish","note":"Dars reja asosida o'tildi.","att":{"xrrj6o88ek":"p","o1dwqyp2oz":"p","5diuwbtaw4":"p","ff3qoawi8c":"p","274fg2kqjo":"p"},"files":[]},{"id":"les_t361jjp90p_6","g":"t361jjp90p","date":"2026-10-19","topic":"7. MS Word amaliy imtihon va mustaqil ish","note":"Dars reja asosida o'tildi.","att":{"xrrj6o88ek":"p","o1dwqyp2oz":"p","5diuwbtaw4":"p","ff3qoawi8c":"p","274fg2kqjo":"p"},"files":[]},{"id":"les_krf13aoar4_0","g":"krf13aoar4","date":"2026-10-05","topic":"1. Kompyuter qurilmalari, Windows interfeysi va sozlamalar","note":"Dars reja asosida o'tildi.","att":{"j0rfem33te":"p"},"files":[]},{"id":"les_krf13aoar4_1","g":"krf13aoar4","date":"2026-10-07","topic":"2. Klaviatura trenajyori, fayl va papkalar bilan to'g'ri ishlash","note":"Dars reja asosida o'tildi.","att":{"j0rfem33te":"p"},"files":[]},{"id":"les_krf13aoar4_2","g":"krf13aoar4","date":"2026-10-09","topic":"3. MS Word: Matn terish, shriftlar va abzas formatlash","note":"Dars reja asosida o'tildi.","att":{"j0rfem33te":"p"},"files":[]},{"id":"les_krf13aoar4_3","g":"krf13aoar4","date":"2026-10-12","topic":"4. MS Word: Jadvallar, rasmlar va shakllar bilan ishlash","note":"Dars reja asosida o'tildi.","att":{"j0rfem33te":"p"},"files":[]},{"id":"les_krf13aoar4_4","g":"krf13aoar4","date":"2026-10-14","topic":"5. MS Word: Hujjat tuzilishi, mundarija va sahifalash","note":"Dars reja asosida o'tildi.","att":{"j0rfem33te":"p"},"files":[]},{"id":"les_krf13aoar4_5","g":"krf13aoar4","date":"2026-10-16","topic":"6. MS Word: Rasmiy hujjatlar tayyorlash va chop etish","note":"Dars reja asosida o'tildi.","att":{"j0rfem33te":"p"},"files":[]},{"id":"les_krf13aoar4_6","g":"krf13aoar4","date":"2026-10-19","topic":"7. MS Word amaliy imtihon va mustaqil ish","note":"Dars reja asosida o'tildi.","att":{"j0rfem33te":"p"},"files":[]},{"id":"les_fmh2f944zl_0","g":"fmh2f944zl","date":"2026-10-06","topic":"1. Kompyuter qurilmalari, Windows interfeysi va sozlamalar","note":"Dars reja asosida o'tildi.","att":{"jd5vw1i9ny":"p","xxi3d4rt6v":"p","7bxcmm79st":"p","982xophg29":"p"},"files":[]},{"id":"les_fmh2f944zl_1","g":"fmh2f944zl","date":"2026-10-08","topic":"2. Klaviatura trenajyori, fayl va papkalar bilan to'g'ri ishlash","note":"Dars reja asosida o'tildi.","att":{"jd5vw1i9ny":"p","xxi3d4rt6v":"p","7bxcmm79st":"p","982xophg29":"p"},"files":[]},{"id":"les_fmh2f944zl_2","g":"fmh2f944zl","date":"2026-10-10","topic":"3. MS Word: Matn terish, shriftlar va abzas formatlash","note":"Dars reja asosida o'tildi.","att":{"jd5vw1i9ny":"a","xxi3d4rt6v":"p","7bxcmm79st":"p","982xophg29":"p"},"files":[]},{"id":"les_fmh2f944zl_3","g":"fmh2f944zl","date":"2026-10-13","topic":"4. MS Word: Jadvallar, rasmlar va shakllar bilan ishlash","note":"Dars reja asosida o'tildi.","att":{"jd5vw1i9ny":"p","xxi3d4rt6v":"p","7bxcmm79st":"p","982xophg29":"p"},"files":[]},{"id":"les_fmh2f944zl_4","g":"fmh2f944zl","date":"2026-10-15","topic":"5. MS Word: Hujjat tuzilishi, mundarija va sahifalash","note":"Dars reja asosida o'tildi.","att":{"jd5vw1i9ny":"p","xxi3d4rt6v":"e","7bxcmm79st":"p","982xophg29":"p"},"files":[]},{"id":"les_fmh2f944zl_5","g":"fmh2f944zl","date":"2026-10-17","topic":"6. MS Word: Rasmiy hujjatlar tayyorlash va chop etish","note":"Dars reja asosida o'tildi.","att":{"jd5vw1i9ny":"p","xxi3d4rt6v":"p","7bxcmm79st":"p","982xophg29":"p"},"files":[]},{"id":"les_fmh2f944zl_6","g":"fmh2f944zl","date":"2026-10-20","topic":"7. MS Word amaliy imtihon va mustaqil ish","note":"Dars reja asosida o'tildi.","att":{"jd5vw1i9ny":"p","xxi3d4rt6v":"p","7bxcmm79st":"p","982xophg29":"p"},"files":[]},{"id":"les_6qf9bmkq72_0","g":"6qf9bmkq72","date":"2026-10-06","topic":"1. Kompyuter qurilmalari, Windows interfeysi va sozlamalar","note":"Dars reja asosida o'tildi.","att":{"q5iguu61qw":"p","g0al9tbblo":"p","lullfz1gb7":"p"},"files":[]},{"id":"les_6qf9bmkq72_1","g":"6qf9bmkq72","date":"2026-10-08","topic":"2. Klaviatura trenajyori, fayl va papkalar bilan to'g'ri ishlash","note":"Dars reja asosida o'tildi.","att":{"q5iguu61qw":"p","g0al9tbblo":"p","lullfz1gb7":"p"},"files":[]},{"id":"les_6qf9bmkq72_2","g":"6qf9bmkq72","date":"2026-10-10","topic":"3. MS Word: Matn terish, shriftlar va abzas formatlash","note":"Dars reja asosida o'tildi.","att":{"q5iguu61qw":"a","g0al9tbblo":"p","lullfz1gb7":"p"},"files":[]},{"id":"les_6qf9bmkq72_3","g":"6qf9bmkq72","date":"2026-10-13","topic":"4. MS Word: Jadvallar, rasmlar va shakllar bilan ishlash","note":"Dars reja asosida o'tildi.","att":{"q5iguu61qw":"p","g0al9tbblo":"p","lullfz1gb7":"p"},"files":[]},{"id":"les_6qf9bmkq72_4","g":"6qf9bmkq72","date":"2026-10-15","topic":"5. MS Word: Hujjat tuzilishi, mundarija va sahifalash","note":"Dars reja asosida o'tildi.","att":{"q5iguu61qw":"p","g0al9tbblo":"p","lullfz1gb7":"p"},"files":[]},{"id":"les_6qf9bmkq72_5","g":"6qf9bmkq72","date":"2026-10-17","topic":"6. MS Word: Rasmiy hujjatlar tayyorlash va chop etish","note":"Dars reja asosida o'tildi.","att":{"q5iguu61qw":"p","g0al9tbblo":"p","lullfz1gb7":"p"},"files":[]},{"id":"les_6qf9bmkq72_6","g":"6qf9bmkq72","date":"2026-10-20","topic":"7. MS Word amaliy imtihon va mustaqil ish","note":"Dars reja asosida o'tildi.","att":{"q5iguu61qw":"p","g0al9tbblo":"p","lullfz1gb7":"p"},"files":[]}],"payments":[{"id":"pay_3xn3r8zk6a_2026_10","s":"3xn3r8zk6a","m":"2026-10","amt":350000,"date":"2026-10-05","note":"Shu oy to'lovi"},{"id":"pay_o1dwqyp2oz_2026_10","s":"o1dwqyp2oz","m":"2026-10","amt":250000,"date":"2026-10-05","note":"Shu oy to'lovi"},{"id":"pay_xxi3d4rt6v_2026_10","s":"xxi3d4rt6v","m":"2026-10","amt":250000,"date":"2026-10-05","note":"Shu oy to'lovi"},{"id":"pay_5diuwbtaw4_2026_10","s":"5diuwbtaw4","m":"2026-10","amt":250000,"date":"2026-10-05","note":"Shu oy to'lovi"},{"id":"pay_ff3qoawi8c_2026_10","s":"ff3qoawi8c","m":"2026-10","amt":250000,"date":"2026-10-05","note":"Shu oy to'lovi"},{"id":"pay_lhrkrn9sqk_2026_10","s":"lhrkrn9sqk","m":"2026-10","amt":350000,"date":"2026-10-05","note":"Shu oy to'lovi"},{"id":"pay_7bxcmm79st_2026_10","s":"7bxcmm79st","m":"2026-10","amt":250000,"date":"2026-10-05","note":"Shu oy to'lovi"},{"id":"pay_5l3xfvkuqk_2026_10","s":"5l3xfvkuqk","m":"2026-10","amt":350000,"date":"2026-10-05","note":"Shu oy to'lovi"},{"id":"pay_423pkpai2k_2026_10","s":"423pkpai2k","m":"2026-10","amt":350000,"date":"2026-10-05","note":"Shu oy to'lovi"},{"id":"pay_j710ejjmmc_2026_10","s":"j710ejjmmc","m":"2026-10","amt":350000,"date":"2026-10-05","note":"Shu oy to'lovi"},{"id":"pay_274fg2kqjo_2026_10","s":"274fg2kqjo","m":"2026-10","amt":250000,"date":"2026-10-05","note":"Shu oy to'lovi"}],"salaries":[{"id":"sal_1","date":"2026-10-15","m":"2026-10","amt":1000000,"note":"Oylikdan avans"}],"comments":[]};
+
+/* ---------- IndexedDB ---------- */
+const idb = () => new Promise((ok, no) => {
+  const r = indexedDB.open('markaz_v2', 2);
+  r.onupgradeneeded = () => r.result.createObjectStore('kv');
+  r.onsuccess = () => ok(r.result);
+  r.onerror = () => no(r.error);
+});
+const kv = async (m, k, v) => {
+  const d = await idb();
+  return new Promise((ok, no) => {
+    const s = d.transaction('kv', m === 'get' ? 'readonly' : 'readwrite').objectStore('kv');
+    const q = m === 'get' ? s.get(k) : m === 'del' ? s.delete(k) : s.put(v, k);
+    q.onsuccess = () => ok(q.result);
+    q.onerror = () => no(q.error);
+  });
+};
+
+let S, handle = null, needPerm = false, authed = false, view = 'home', ctx = {}, status = '', syncStatus = 'idle', tm, syncTm;
+const canFile = !!(window.showSaveFilePicker && window.showOpenFilePicker);
+const JT = [{ description: 'JSON fayl', accept: { 'application/json': ['.json'] } }];
+
+function setStatus(t, sync) {
+  status = t;
+  if (sync) syncStatus = sync;
+  const e = $('#st'), se = $('#sync-dot'), stext = $('#sync-text');
+  if (e) e.textContent = t;
+  if (se && stext) {
+    se.className = 'sync-dot ' + (syncStatus === 'ok' ? 'green' : syncStatus === 'syncing' ? 'yellow' : syncStatus === 'err' ? 'red' : '');
+    stext.textContent = syncStatus === 'ok' ? 'Bulut: Sinxronlangan' : syncStatus === 'syncing' ? 'Bulut: Saqlanmoqda...' : syncStatus === 'err' ? 'Bulut: Xatolik' : 'Bulut: Lokal rejim';
+  }
+}
+
+function save() {
+  S.updatedAt = new Date().toISOString();
+  kv('put', 'data', S).catch(() => {});
+  clearTimeout(tm);
+  tm = setTimeout(doSave, 400);
+
+  // GitHub Auto-sync
+  if (S.settings?.github?.autoSync && S.settings?.github?.token && S.settings?.github?.gistId) {
+    clearTimeout(syncTm);
+    syncTm = setTimeout(() => {
+      cloudPush(true).catch(() => {});
+    }, 2000);
+  }
+}
+
+async function doSave() {
+  if (!handle) {
+    setStatus('Lokal xotirada saqlandi: ' + now().slice(11), syncStatus);
+    return;
+  }
+  if (needPerm) {
+    setStatus("Faylga yozish uchun ruxsat kerak.", syncStatus);
+    return;
+  }
+  try {
+    const w = await handle.createWritable();
+    await w.write(JSON.stringify(S, null, 1));
+    await w.close();
+    setStatus("Faylga saqlandi: " + now().slice(11), syncStatus);
+  } catch (e) {
+    setStatus("Faylga yozib bolmadi.", syncStatus);
+  }
+}
+
+const commit = () => { save(); render(); };
+
+/* ---------- GitHub Cloud Sync API ---------- */
+async function cloudPush(isAuto) {
+  const gh = S.settings?.github;
+  if (!gh || !gh.token || !gh.gistId) {
+    if (!isAuto) alert("GitHub Token yoki Gist ID kiritilmagan. Sozlamalar bo'limida kiriting.");
+    return false;
+  }
+  setStatus('GitHub-ga yuborilmoqda...', 'syncing');
+  try {
+    const res = await fetch(`https://api.github.com/gists/${gh.gistId}`, {
+      method: 'PATCH',
+      headers: {
+        'Accept': 'application/vnd.github.v3+json',
+        'Authorization': 'token ' + gh.token,
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({
+        description: "O'quv markaz nazorat jurnali - " + new Date().toLocaleString(),
+        files: {
+          'markaz_data.json': {
+            content: JSON.stringify(S, null, 2)
+          }
+        }
+      })
+    });
+    if (!res.ok) throw new Error('Status: ' + res.status);
+    gh.lastSync = new Date().toISOString();
+    setStatus('GitHub-ga yuklandi: ' + now().slice(11), 'ok');
+    if (!isAuto) alert("Ma'lumotlar GitHub bulutiga muvaffaqiyatli yuklandi!");
+    render();
+    return true;
+  } catch (e) {
+    console.error(e);
+    setStatus('GitHub-ga yuklashda xatolik!', 'err');
+    if (!isAuto) alert("GitHub-ga yuklashda xatolik: Token yoki Internetni tekshiring.");
+    return false;
+  }
+}
+
+async function cloudPull(isAuto) {
+  const gh = S.settings?.github;
+  if (!gh || !gh.token || !gh.gistId) {
+    if (!isAuto) alert("GitHub Token yoki Gist ID kiritilmagan.");
+    return false;
+  }
+  setStatus('GitHub-dan yuklanmoqda...', 'syncing');
+  try {
+    const res = await fetch(`https://api.github.com/gists/${gh.gistId}`, {
+      headers: {
+        'Accept': 'application/vnd.github.v3+json',
+        'Authorization': 'token ' + gh.token
+      }
+    });
+    if (!res.ok) throw new Error('Status: ' + res.status);
+    const json = await res.json();
+    const file = json.files && json.files['markaz_data.json'];
+    if (!file || !file.content) throw new Error('Gist ichida markaz_data.json topilmadi');
+    const cloudData = JSON.parse(file.content);
+    
+    if (!cloudData.groups || !cloudData.students) throw new Error("Ma'lumot formati noto'g'ri");
+    
+    if (!isAuto && S.updatedAt && cloudData.updatedAt && S.updatedAt > cloudData.updatedAt) {
+      if (!confirm("Diqqat! Kompyuteringizdagi lokal ma'lumot GitHub-dagidan ko'ra yangiroq. Baribir GitHub-dagi bilan almashtirilsinmi?")) {
+        setStatus('Sinxronlash bekor qilindi', 'ok');
+        return false;
+      }
+    }
+    
+    S = cloudData;
+    S.settings.github = gh;
+    gh.lastSync = new Date().toISOString();
+    kv('put', 'data', S).catch(() => {});
+    setStatus('GitHub-dan yangilandi: ' + now().slice(11), 'ok');
+    if (!isAuto) alert("Ma'lumotlar GitHub bulutidan muvaffaqiyatli yuklandi!");
+    render();
+    return true;
+  } catch (e) {
+    console.error(e);
+    setStatus('GitHub-dan yuklashda xatolik!', 'err');
+    if (!isAuto) alert("GitHub-dan yuklashda xatolik yuz berdi. Internet va tokenni tekshiring.");
+    return false;
+  }
+}
+
+async function cloudCreateGist() {
+  const gh = S.settings?.github;
+  if (!gh || !gh.token) {
+    alert("Avval GitHub Personal Access Token (PAT) kiriting!");
+    return;
+  }
+  setStatus('Gist yaratilmoqda...', 'syncing');
+  try {
+    const res = await fetch('https://api.github.com/gists', {
+      method: 'POST',
+      headers: {
+        'Accept': 'application/vnd.github.v3+json',
+        'Authorization': 'token ' + gh.token,
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({
+        description: "O'quv markaz nazorat jurnali - Baza",
+        public: false,
+        files: {
+          'markaz_data.json': {
+            content: JSON.stringify(S, null, 2)
+          }
+        }
+      })
+    });
+    if (!res.ok) throw new Error('Status: ' + res.status);
+    const json = await res.json();
+    gh.gistId = json.id;
+    gh.lastSync = new Date().toISOString();
+    save();
+    setStatus('Gist yaratildi va ulandi!', 'ok');
+    alert("GitHub-da yangi maxfiy ombor (Gist) yaratildi! ID: " + json.id);
+    render();
+  } catch (e) {
+    console.error(e);
+    setStatus('Gist yaratishda xatolik!', 'err');
+    alert("Gist yaratib bo'lmadi. Token huquqlarida 'gist' belgisi borligini tekshiring.");
+  }
+}
+
+/* ---------- Date & Time Helpers ---------- */
+const fdt = iso => {
+  if (!iso) return '-';
+  const d = iso.slice(0, 10), t = iso.slice(11, 16);
+  return `${fdate(d)}${t ? ', ' + t : ''}`;
+};
+
+const getCoursePlan = cat => {
+  if (S?.settings?.syllabuses?.[cat] && Array.isArray(S.settings.syllabuses[cat]) && S.settings.syllabuses[cat].length) {
+    return S.settings.syllabuses[cat];
+  }
+  return SYLLABUS_PRESETS[cat] || [];
+};
+
+/* ---------- Boot ---------- */
+async function boot() {
+  try {
+    S = await kv('get', 'data');
+    handle = await kv('get', 'handle');
+  } catch (e) {}
+
+  if (!S || !S.groups || !S.groups.length) {
+    S = JSON.parse(JSON.stringify(SEED_DATA));
+    S.auth.h = hash('pass4225');
+    kv('put', 'data', S).catch(() => {});
+  }
+
+  S.settings = S.settings || {};
+  S.settings.rates = Object.assign({}, DEFAULT_RATES, S.settings.rates || {});
+  S.settings.syllabuses = Object.assign({}, SYLLABUS_PRESETS, S.settings.syllabuses || {});
+  S.settings.teacherBasePercent = S.settings.teacherBasePercent || 50;
+  S.settings.github = S.settings.github || { token: '', gistId: '', autoSync: false, lastSync: null };
+  S.salaries = S.salaries || [];
+  S.notes = S.notes || [];
+
+  if (handle) {
+    try {
+      if (await handle.queryPermission({ mode: 'readwrite' }) === 'granted') {
+        const t = await (await handle.getFile()).text();
+        if (t.trim()) {
+          S = JSON.parse(t);
+          S.settings = S.settings || {};
+          S.settings.syllabuses = Object.assign({}, SYLLABUS_PRESETS, S.settings.syllabuses || {});
+          S.notes = S.notes || [];
+        }
+      } else needPerm = true;
+    } catch (e) { needPerm = true; }
+  }
+
+  try { authed = sessionStorage.getItem('mk') === '1'; } catch (e) {}
+
+  if (S.settings?.github?.autoSync && S.settings?.github?.token && S.settings?.github?.gistId) {
+    cloudPull(true).catch(() => {});
+  } else {
+    setStatus('Lokal xotirada faol', 'idle');
+  }
+
+  render();
+}
+
+/* ---------- Date & Time Helpers ---------- */
+let keep = false, sx = 0, sy = 0, sl = 0;
+const hold = () => { keep = true; sx = scrollX; sy = scrollY; sl = ($('.gt') || {}).scrollLeft || 0; };
+const DAYS = ['Du', 'Se', 'Chor', 'Pay', 'Ju', 'Sha', 'Yak'];
+const DAYN = ['Dushanba', 'Seshanba', 'Chorshanba', 'Payshanba', 'Juma', 'Shanba', 'Yakshanba'];
+const wd = d => (new Date(d + 'T00:00').getDay() + 6) % 7;
+const addD = (d, n) => { const x = new Date(d + 'T00:00'); x.setDate(x.getDate() + n); return ymd(x); };
+const addM = (d, n) => {
+  const x = new Date(d + 'T00:00'), day = x.getDate();
+  x.setDate(1);
+  x.setMonth(x.getMonth() + n);
+  x.setDate(Math.min(day, new Date(x.getFullYear(), x.getMonth() + 1, 0).getDate()));
+  return ymd(x);
+};
+const mon = d => addD(d, -wd(d));
+
+/* ---------- Business Logic & Getters ---------- */
+const G = id => S.groups.find(g => g.id === id);
+const ST = id => S.students.find(s => s.id === id);
+const gEnd = g => g.closed || g.end || '';
+const gArch = g => !!g && (!!g.closed || (!!g.end && g.end < today()));
+const gAct = (g, m) => !!g && (!g.start || g.start.slice(0, 7) <= m) && (!gEnd(g) || gEnd(g).slice(0, 7) >= m);
+const act = (s, m) => gAct(G(s.g), m) && (!s.out || s.out.slice(0, 7) >= m);
+const sArch = s => !!s.out || gArch(G(s.g));
+const inSpan = (g, dt) => (!g.start || dt >= g.start) && (!gEnd(g) || dt <= gEnd(g));
+const defG = () => (S.groups.find(g => !gArch(g)) || S.groups[0])?.id || '';
+
+const COURSE_LABELS = {
+  komp: "Kompyuter savodxonligi",
+  it_foundation: "IT dasturlash: Foundation",
+  it_frontend: "IT dasturlash: Frontend",
+  it_backend: "IT dasturlash: Backend",
+  indiv: "Individual ta'lim",
+  other: "Boshqa kurs"
+};
+
+const gBadge = g => g.closed ? ['Yopilgan', 'b-n'] : (g.end && g.end < today()) ? ['Tugagan', 'b-n'] : (g.start && g.start > today()) ? ['Boshlanmagan', 'b-warn'] : ['Faol', 'b-ok'];
+const sState = s => s.out ? (s.outT === 'grad' ? ['Bitirgan', 'b-n'] : ['Ketgan', 'b-bad']) : (gArch(G(s.g)) ? ['Guruh yopilgan', 'b-n'] : ['Faol', 'b-ok']);
+const sBadge = s => { const x = sState(s); return `<span class="badge ${x[1]}">${x[0]}</span>`; };
+
+const period = g => (g.start || gEnd(g)) ? `${g.start ? fdate(g.start) : '?'} - ${gEnd(g) ? fdate(gEnd(g)) : 'muddatsiz'}` : '<small>Kiritilmagan</small>';
+
+const gopts = (sel, all) => {
+  const o = g => `<option value="${g.id}" ${g.id === sel ? 'selected' : ''}>${esc(g.name)} (${COURSE_LABELS[g.cat] || 'Kurs'})</option>`;
+  const a = S.groups.filter(g => !gArch(g)), r = S.groups.filter(g => gArch(g));
+  return (all ? `<option value="all" ${sel === 'all' ? 'selected' : ''}>Barcha guruhlar</option>` : '') + a.map(o).join('') + (r.length ? `<optgroup label="Arxiv (yopilgan guruhlar)">${r.map(o).join('')}</optgroup>` : '');
+};
+
+const feeOf = s => {
+  if (s.fee != null && s.fee !== '') return Number(s.fee);
+  const grp = G(s.g);
+  if (s.rateType && S.settings?.rates?.[s.rateType]) {
+    return Number(S.settings.rates[s.rateType].fee || 0);
+  }
+  return Number(grp?.fee || 0);
+};
+
+const isExempt = (s, m) => s.payMode === 'exempt' || (s.monthStatus && s.monthStatus[m] === 'exempt');
+const isPrepaid = (s, m) => s.payMode === 'prepaid' || (s.monthStatus && s.monthStatus[m] === 'prepaid');
+
+const paid = (sid, m) => S.payments.filter(p => p.s === sid && p.m === m).reduce((a, p) => a + Number(p.amt || 0), 0);
+
+const expectedOf = (s, m) => {
+  if (!act(s, m)) return 0;
+  if (isExempt(s, m)) return 0;
+  if (isPrepaid(s, m)) return 0;
+  return feeOf(s);
+};
+
+const owes = (s, m) => {
+  if (!act(s, m)) return 0;
+  if (isExempt(s, m)) return 0;
+  if (isPrepaid(s, m)) return 0;
+  return Math.max(0, feeOf(s) - paid(s.id, m));
+};
+
+const payBadge = (s, m) => {
+  if (isExempt(s, m)) return "<span class='badge b-info'>To'lovdan ozod (Grant)</span>";
+  if (isPrepaid(s, m)) return "<span class='badge b-ok'>Oldindan to'langan</span>";
+  const f = feeOf(s), p = paid(s.id, m);
+  if (!act(s, m) && !p) return "<span class='badge b-n'>Faol emas</span>";
+  if (!f) return "<span class='badge b-n'>Belgilanmagan</span>";
+  if (p >= f) return "<span class='badge b-ok'>To'langan</span>";
+  if (p > 0) return "<span class='badge b-warn'>Qisman</span>";
+  return "<span class='badge b-bad'>To'lanmagan</span>";
+};
+
+const lessonsOf = gid => S.lessons.filter(l => l.g === gid).sort((a, b) => b.date.localeCompare(a.date));
+const isTopicDone = (g, topic) => S.lessons.some(l => l.g === g.id && l.topic.trim().toLowerCase() === topic.trim().toLowerCase());
+
+function getTopicStats(g) {
+  const plan = g.plan || [];
+  const total = plan.length;
+  const covered = plan.filter(t => isTopicDone(g, t)).length;
+  const remaining = total - covered;
+  const pct = total ? Math.round((covered / total) * 100) : 0;
+  const next = plan.find(t => !isTopicDone(g, t)) || (total ? "Barcha mavzular o'tildi" : "Reja kiritilmagan");
+  const last = lessonsOf(g.id)[0];
+  return { total, covered, remaining, pct, next, last };
+}
+
+const attBadge = v => v === 'p' ? '<span class="badge b-ok">Keldi</span>' : v === 'a' ? '<span class="badge b-bad">Kelmadi</span>' : v === 'e' ? '<span class="badge b-warn">Sababli</span>' : '';
+
+function attStat(s) {
+  const l = S.lessons.filter(x => x.g === s.g && x.att && x.att[s.id]);
+  const p = l.filter(x => x.att[s.id] === 'p').length;
+  const a = l.filter(x => x.att[s.id] === 'a').length;
+  const e = l.filter(x => x.att[s.id] === 'e').length;
+  return { t: l.length, p, a, e, pct: l.length ? Math.round(p / l.length * 100) : null, lessons: l };
+}
+
+function calcSalary(m) {
+  let totalCollected = 0;
+  let totalTeacherEarned = 0;
+  let totalExpected = 0;
+  let totalTeacherExpected = 0;
+
+  const groupBreakdown = S.groups.map(g => {
+    const st = S.students.filter(s => s.g === g.id && (act(s, m) || paid(s.id, m) > 0));
+    const grpPaid = st.reduce((a, s) => a + paid(s.id, m), 0);
+    const grpExp = st.reduce((a, s) => a + expectedOf(s, m), 0);
+    const pct = g.teacherPercent != null ? g.teacherPercent : (S.settings?.rates?.[g.cat]?.teacherPercent ?? S.settings?.teacherBasePercent ?? 50);
+    const teacherEarned = Math.round(grpPaid * (pct / 100));
+    const teacherExp = Math.round(grpExp * (pct / 100));
+
+    totalCollected += grpPaid;
+    totalTeacherEarned += teacherEarned;
+    totalExpected += grpExp;
+    totalTeacherExpected += teacherExp;
+
+    return {
+      group: g,
+      stCount: st.length,
+      paidCount: st.filter(s => paid(s.id, m) >= feeOf(s) || isPrepaid(s, m)).length,
+      debtCount: st.filter(s => owes(s, m) > 0).length,
+      exemptCount: st.filter(s => isExempt(s, m)).length,
+      grpPaid,
+      grpExp,
+      pct,
+      teacherEarned,
+      teacherExp,
+      lostSalary: teacherExp - teacherEarned
+    };
+  });
+
+  const advances = (S.salaries || []).filter(sal => sal.m === m).reduce((a, sal) => a + Number(sal.amt || 0), 0);
+  const remainingToReceive = totalTeacherEarned - advances;
+
+  return {
+    month: m,
+    totalCollected,
+    totalTeacherEarned,
+    totalExpected,
+    totalTeacherExpected,
+    lostSalary: totalTeacherExpected - totalTeacherEarned,
+    advances,
+    remainingToReceive,
+    groupBreakdown
+  };
+}
+
+const stat = (t, n, sub, cls = '') => `<div class="stat ${cls}"><b>${n}</b><span>${t}</span>${sub ? `<small class="sub">${sub}</small>` : ''}</div>`;
+const tbl = (h, rows, empty) => rows.length ? `<div class="tw"><table><thead><tr>${h.map(x => `<th class="${x[1] || ''}">${x[0]}</th>`).join('')}</tr></thead><tbody>${rows.join('')}</tbody></table></div>` : `<p class="mut" style="padding:14px 0">${empty}</p>`;
+
+function modal(title, fields, vals, ok) {
+  const el = document.createElement('div');
+  el.className = 'ov';
+  const fld = f => {
+    if (f.t === 'chk') {
+      return `<div style="margin-bottom:14px"><span class="mut" style="font-size:13.5px;font-weight:600">${f.l}</span><div class="seg-group">${DAYS.map((d, i) => `<label class="seg"><input type="checkbox" name="${f.n}" value="${i}" ${(vals[f.n] || []).includes(i) ? 'checked' : ''}><span>${d}</span></label>`).join('')}</div></div>`;
+    }
+    if (f.t === 'sel') {
+      return `<label>${f.l}${f.desc ? `<span class="desc">${f.desc}</span>` : ''}<select name="${f.n}" id="${f.id || ''}">${f.o.map(o => `<option value="${o[0]}" ${o[0] === vals[f.n] ? 'selected' : ''}>${esc(o[1])}</option>`).join('')}</select></label>`;
+    }
+    if (f.t === 'ta') {
+      return `<label>${f.l}${f.desc ? `<span class="desc">${f.desc}</span>` : ''}<textarea name="${f.n}" id="${f.id || ''}" rows="${f.r || 4}" placeholder="${f.p || ''}">${esc(vals[f.n])}</textarea></label>`;
+    }
+    return `<label>${f.l}${f.desc ? `<span class="desc">${f.desc}</span>` : ''}<input name="${f.n}" id="${f.id || ''}" type="${f.t || 'text'}" value="${esc(vals[f.n])}" ${f.req ? 'required' : ''} ${f.min != null ? 'min="' + f.min + '"' : ''} placeholder="${f.p || ''}"></label>`;
+  };
+
+  el.innerHTML = `<form class="mod"><h2>${title}</h2>${fields.map(fld).join('')}<div class="btns"><button type="button" class="ghost" data-x>Bekor qilish</button><button>Saqlash</button></div></form>`;
+  document.body.appendChild(el);
+
+  // Kurs tanlanganda mavzular rejasi va tariflarni avtomatik to'ldirish
+  const catSel = el.querySelector('select[name="cat"]');
+  const planTa = el.querySelector('textarea[name="plan"]');
+  const feeInp = el.querySelector('input[name="fee"]');
+  const pctInp = el.querySelector('input[name="teacherPercent"]');
+  if (catSel && planTa) {
+    catSel.addEventListener('change', () => {
+      const selectedCat = catSel.value;
+      const catPlan = getCoursePlan(selectedCat);
+      planTa.value = catPlan.join('\n');
+      if (feeInp && S.settings?.rates?.[selectedCat]?.fee != null) {
+        feeInp.value = S.settings.rates[selectedCat].fee;
+      }
+      if (pctInp && S.settings?.rates?.[selectedCat]?.teacherPercent != null) {
+        pctInp.value = S.settings.rates[selectedCat].teacherPercent;
+      }
+    });
+  }
+
+  const firstInput = el.querySelector('input:not([type="checkbox"]), select, textarea');
+  if (firstInput) firstInput.focus();
+
+  el.onclick = e => { if (e.target === el || e.target.dataset.x !== undefined) el.remove(); };
+  el.querySelector('form').onsubmit = e => {
+    e.preventDefault();
+    const fd = new FormData(e.target), o = Object.fromEntries(fd);
+    fields.filter(f => f.t === 'chk').forEach(f => o[f.n] = fd.getAll(f.n));
+    ok(o);
+    el.remove();
+  };
+}
+
+function comments(k, r) {
+  const c = (S.comments || []).filter(x => x.k === k && x.r === r).sort((a, b) => b.at.localeCompare(a.at));
+  return `<div class="cm" style="margin-top:12px">${c.map(x => `<div style="border-bottom:1px solid #E2E8F0;padding:8px 0"><div>${esc(x.t).replace(/\n/g, '<br>')}</div><small style="display:flex;gap:12px;margin-top:3px">${fdate(x.at.slice(0, 10))} ${x.at.slice(11, 16)} <a data-act="delc" data-id="${x.id}">O'chirish</a></small></div>`).join('') || '<p class="mut">Izohlar yoq.</p>'}
+  <div style="display:flex;gap:10px;align-items:flex-end;margin-top:14px"><textarea id="c_${k}" rows="2" placeholder="Izoh yozing..."></textarea><button data-act="addc" data-k="${k}" data-r="${r}" class="sm">Qo'shish</button></div></div>`;
+}
+
+/* 1. Boshqaruv paneli */
+function home() {
+  const m = month();
+  const actStudents = S.students.filter(s => !sArch(s));
+  const un = actStudents.filter(s => owes(s, m) > 0).length;
+  const sal = calcSalary(m);
+
+  return `<h1>Boshqaruv paneli</h1>
+  <p class="mut" style="margin-bottom:20px">Bugun: <b>${DAYN[wd(today())]}, ${fdate(today())}</b> | Oylik hisobot davri: <b>${fmonth(m)}</b></p>
+  
+  <div class="stats">
+    ${stat('Faol guruhlar', S.groups.filter(g => !gArch(g)).length, 'Kompyuter va IT kurslari', 'blue')}
+    ${stat("Faol o'quvchilar", actStudents.length, "Jami talim olayotganlar")}
+    ${stat("Mening maoshim (Yig'ilganidan)", fmt(sal.totalTeacherEarned), "Kutilgan to'liq maosh: " + fmt(sal.totalTeacherExpected), 'green')}
+    ${stat("Shu oy to'lamaganlar", un + " ta o'quvchi", "Qarzdorlik: " + fmt(sal.lostSalary), un > 0 ? 'warn' : 'green')}
+  </div>
+
+  <div class="card">
+    <div class="head" style="margin-bottom:12px">
+      <div>
+        <h2>Guruhlar holati va Mavzular progressi</h2>
+        <p class="mut">Qaysi mavzuga yetib kelganingiz va qancha mavzu qolganligi ko'rinishi</p>
+      </div>
+      <button class="sm ghost" data-act="nav" data-v="groups">Barcha guruhlar &rarr;</button>
+    </div>
+    ${tbl([['Guruh va Yo\'nalish'], ['Jadval'], ['Mavzular rejasi'], ['Navbatdagi mavzu'], ['Qolgan mavzular'], ["To'lamaganlar"], ['Holat']], S.groups.filter(g => !gArch(g)).map(g => {
+      const st = S.students.filter(s => s.g === g.id && !s.out);
+      const top = getTopicStats(g);
+      const unG = st.filter(s => owes(s, m) > 0).length;
+      return `<tr class="row" data-act="opg" data-id="${g.id}">
+        <td><b>${esc(g.name)}</b><br><small class="mut">${COURSE_LABELS[g.cat] || 'Kurs'}</small></td>
+        <td>${esc(g.sched || 'Belgilanmagan')}</td>
+        <td>
+          <div class="bar-wrap">
+            <div class="bar"><i style="width:${top.pct}%"></i></div>
+            <small><b>${top.covered}</b> / ${top.total} (${top.pct}%)</small>
+          </div>
+        </td>
+        <td style="max-width:260px"><small><b>${esc(top.next)}</b></small></td>
+        <td>${top.remaining > 0 ? `<span class="badge b-warn">${top.remaining} ta qoldi</span>` : '<span class="badge b-ok">Tugallandi</span>'}</td>
+        <td>${unG ? `<span class="badge b-bad">${unG} ta</span>` : '<span class="badge b-ok">0</span>'}</td>
+        <td>${gBadge(g)[0]}</td>
+      </tr>`;
+    }), "Faol guruhlar mavjud emas.")}
+  </div>`;
+}
+
+/* 2. Guruhlar ro'yxati */
+function groups() {
+  const arch = ctx.gs === 'arch';
+  const na = S.groups.filter(g => gArch(g)).length;
+  const m = month();
+
+  return `<div class="head">
+    <div>
+      <h1>Guruhlar</h1>
+      <p class="mut">Kompyuter savodxonligi, IT dasturlash (Foundation, Frontend, Backend) va Individual guruhlaringiz</p>
+    </div>
+    <button data-act="gform">+ Yangi guruh ochish</button>
+  </div>
+  
+  <div class="btns" style="margin-bottom:16px">
+    <button class="ghost ${arch ? '' : 'on'}" data-act="gs" data-id="act">Faol guruhlar (${S.groups.length - na})</button>
+    <button class="ghost ${arch ? 'on' : ''}" data-act="gs" data-id="arch">Arxivdagi guruhlar (${na})</button>
+  </div>
+
+  <div class="card">
+    ${tbl([['Guruh nomi'], ['Kurs toifasi'], ["O'quvchilar"], ['Mavzular rejasi'], ["Oxirgi dars"], ['Qolgan mavzular'], ["To'lov"], ['Holat']], S.groups.filter(g => gArch(g) === arch).map(g => {
+      const st = S.students.filter(s => s.g === g.id);
+      const n = arch ? st.length : st.filter(s => !s.out).length;
+      const top = getTopicStats(g);
+      const b = gBadge(g);
+      return `<tr class="row" data-act="opg" data-id="${g.id}">
+        <td><b>${esc(g.name)}</b><br><small class="mut">${period(g)}</small></td>
+        <td><span class="badge b-info">${COURSE_LABELS[g.cat] || 'Kurs'}</span></td>
+        <td><b>${n}</b> ta o'quvchi</td>
+        <td>
+          <div class="bar-wrap">
+            <div class="bar"><i style="width:${top.pct}%"></i></div>
+            <small>${top.covered} / ${top.total}</small>
+          </div>
+        </td>
+        <td>${top.last ? fdate(top.last.date) + '<br><small>' + esc(top.last.topic || '') + '</small>' : '<small>Dars otilmagan</small>'}</td>
+        <td>${top.remaining > 0 ? `<b style="color:var(--warn)">${top.remaining} ta mavzu</b>` : '<span class="badge b-ok">Reja toliq otildi</span>'}</td>
+        <td>${fmt(g.fee)}</td>
+        <td><span class="badge ${b[1]}">${b[0]}</span></td>
+      </tr>`;
+    }), arch ? "Arxivda guruh yo'q." : "Faol guruh yo'q.")}
+  </div>`;
+}
+
+/* 3. Guruh tafsilotlari */
+function group() {
+  const g = G(ctx.id);
+  if (!g) { view = 'groups'; return groups(); }
+  const st = S.students.filter(s => s.g === g.id).sort((a, b) => (sArch(a) - sArch(b)) || a.name.localeCompare(b.name));
+  const ls = lessonsOf(g.id);
+  const plan = g.plan || [];
+  const m = month();
+  const arch = gArch(g);
+  const b = gBadge(g);
+  const top = getTopicStats(g);
+
+  return `<div class="head">
+    <div>
+      <a class="back" data-act="nav" data-v="groups">&larr; Guruhlar ro'yxatiga qaytish</a>
+      <h1>${esc(g.name)} <span class="badge ${b[1]}" style="vertical-align:middle">${b[0]}</span></h1>
+      <p class="mut">Yo'nalish: <b>${COURSE_LABELS[g.cat] || 'Kurs'}</b> | Jadval: <b>${esc(g.sched || 'Belgilanmagan')}</b></p>
+      <p class="mut">Oylik to'lov: <b>${fmt(g.fee)}</b> | O'qituvchi ulushi: <b>${g.teacherPercent != null ? g.teacherPercent : 50}%</b> | Davr: ${period(g)}</p>
+    </div>
+    <div class="btns">
+      ${arch ? `<button data-act="greopen" data-id="${g.id}">Qayta faollashtirish</button>` : `<button data-act="lessonfor" data-id="${g.id}">+ Dars o'tkazish</button><button class="ghost" data-act="gclose" data-id="${g.id}">Guruhni yopish</button>`}
+      <button class="ghost" data-act="gform" data-id="${g.id}">Tahrirlash</button>
+      <button class="danger" data-act="delg" data-id="${g.id}">O'chirish</button>
+    </div>
+  </div>
+
+  <div class="stats">
+    ${stat("Jami o'quvchilar", st.length + " nafar", "Faol: " + st.filter(s => !s.out).length)}
+    ${stat("O'tilgan mavzular", top.covered + " ta (" + top.pct + "%)", "Jami reja: " + top.total + " ta")}
+    ${stat("Qolgan mavzular", top.remaining + " ta", "Taxminan " + Math.ceil(top.remaining / ((g.days || []).length || 3)) + " hafta dars qoldi", top.remaining > 0 ? 'warn' : 'green')}
+    ${stat("O'tilgan darslar soni", ls.length + " ta", "Barcha darslar tarixi")}
+  </div>
+
+  <div class="grid2">
+    <section class="card">
+      <div class="head" style="margin:0 0 10px">
+        <h2>O'quvchilar (${st.length})</h2>
+        ${arch ? '' : `<button class="sm" data-act="sform" data-g="${g.id}">+ O'quvchi qo'shish</button>`}
+      </div>
+      ${tbl([['Ism'], ["To'lov tarifi"], ['Davomat'], ["Shu oy to'lovi"]], st.map(s => {
+        const a = attStat(s);
+        return `<tr class="row" data-act="ops" data-id="${s.id}">
+          <td><b>${esc(s.name)}</b> ${s.phone ? `<br><small>${esc(s.phone)}</small>` : ''}</td>
+          <td><small>${COURSE_LABELS[s.rateType] || 'Standart'}</small><br><b>${fmt(feeOf(s))}</b></td>
+          <td>${a.pct == null ? '<small>-</small>' : `<b>${a.pct}%</b> <small>(${a.p}/${a.t})</small>`}</td>
+          <td>${payBadge(s, m)}</td>
+        </tr>`;
+      }), "Bu guruhda o'quvchi yo'q.")}
+    </section>
+
+    <section class="card">
+      <div class="head" style="margin:0 0 10px">
+        <div>
+          <h2>Mavzular rejasi (Syllabus)</h2>
+          <p class="mut" style="font-size:12px;margin:0">Keyingi dars mavzusi: <b>${esc(top.next)}</b></p>
+        </div>
+        <button class="sm ghost" data-act="gform" data-id="${g.id}">Rejani tahrirlash</button>
+      </div>
+      ${plan.length ? `
+        <div style="max-height:360px;overflow-y:auto;padding-right:6px">
+          <ol class="syllabus">
+            ${plan.map((t, idx) => {
+              const done = isTopicDone(g, t);
+              const isNext = !done && plan.findIndex(x => !isTopicDone(g, x)) === idx;
+              return `<li class="${done ? 'done' : isNext ? 'active' : ''}">
+                <span>${esc(t)}</span>
+                ${done ? "<span class='badge b-ok' style='font-size:11px'>✓ O'tildi</span>" : isNext ? "<span class='badge b-info' style='font-size:11px'>Keyingi dars</span>" : ''}
+              </li>`;
+            }).join('')}
+          </ol>
+        </div>` : "<p class='mut'>Reja kiritilmagan. Rejani tahrirlash orqali tayyor rejalardan birini tanlang.</p>"}
+    </section>
+  </div>
+
+  <section class="card">
+    <h2>O'tilgan darslar tarixi</h2>
+    ${tbl([['Sana'], ['Mavzu'], ['Keldi', 'c'], ['Kelmadi', 'c'], ['Sababli', 'c'], ['Izoh']], ls.map(l => {
+      const v = Object.values(l.att || {});
+      return `<tr class="row" data-act="openl" data-id="${l.id}">
+        <td><b>${fdate(l.date)}</b>, ${DAYN[wd(l.date)].slice(0, 3)}</td>
+        <td><b>${esc(l.topic || '-')}</b></td>
+        <td class="c"><span class="badge b-ok">${v.filter(x => x === 'p').length}</span></td>
+        <td class="c"><span class="badge b-bad">${v.filter(x => x === 'a').length}</span></td>
+        <td class="c"><span class="badge b-warn">${v.filter(x => x === 'e').length}</span></td>
+        <td><small>${esc((l.note || '').slice(0, 60))}</small></td>
+      </tr>`;
+    }), "Hali dars o'tkazilmagan.")}
+  </section>
+
+  <section class="card">
+    <h2>Guruh bo'yicha eslatma va izohlar</h2>
+    ${comments('group', g.id)}
+  </section>`;
+}
+
+/* 4. O'quvchilar ro'yxati va monitoringi */
+const stuRows = () => {
+  const q = (ctx.q || '').toLowerCase();
+  const f = ctx.f || '';
+  const scat = ctx.scat || '';
+  const m = month();
+  const sf = ctx.ss || 'act';
+  const r = S.students.filter(s => {
+    if (f && s.g !== f) return false;
+    if (scat) {
+      const g = G(s.g);
+      const cCat = g?.cat || s.rateType;
+      if (cCat !== scat) return false;
+    }
+    if (q && !s.name.toLowerCase().includes(q) && !(s.phone || '').toLowerCase().includes(q)) return false;
+    if (sf === 'arch') return sArch(s);
+    if (sf === 'act') return !sArch(s);
+    return true; // all
+  }).sort((a, b) => a.name.localeCompare(b.name));
+
+  return tbl([['Ism va Telefon'], ['Guruh / Yo\'nalish'], ['Tarif / Oylik'], ['Davomat'], ["Shu oy to'lovi"], ['Holat']], r.map(s => {
+    const a = attStat(s);
+    const grp = G(s.g);
+    return `<tr class="row" data-act="ops" data-id="${s.id}">
+      <td><b>${esc(s.name)}</b>${s.phone ? `<br><small>${esc(s.phone)}</small>` : ''}</td>
+      <td><b>${esc(grp?.name || '-')}</b><br><small class="mut">${COURSE_LABELS[grp?.cat] || COURSE_LABELS[s.rateType] || '-'}</small></td>
+      <td><small>${COURSE_LABELS[s.rateType] || 'Standart'}</small><br><b>${fmt(feeOf(s))}</b></td>
+      <td>${a.pct == null ? '<small>-</small>' : `<b>${a.pct}%</b> <small>(${a.p}/${a.t})</small>`}</td>
+      <td>${payBadge(s, m)}</td>
+      <td>${sBadge(s)}</td>
+    </tr>`;
+  }), "O'quvchi topilmadi.");
+};
+
+function students() {
+  const sf = ctx.ss || 'act';
+  const m = month();
+  const allS = S.students || [];
+
+  // Jami va o'qiyotganlar statistikasi
+  const totalStudents = allS.length;
+  const studyingStudents = allS.filter(s => !sArch(s));
+  const studyingCount = studyingStudents.length;
+
+  // Ketgan va bitirganlar
+  const thisMonthLeft = allS.filter(s => s.out && s.out.slice(0, 7) === m && s.outT !== 'grad');
+  const thisMonthGrad = allS.filter(s => s.out && s.out.slice(0, 7) === m && s.outT === 'grad');
+
+  const totalLeft = allS.filter(s => s.out && s.outT !== 'grad');
+  const totalGrad = allS.filter(s => s.out && s.outT === 'grad');
+  const totalOut = allS.filter(s => s.out);
+
+  // Kurslar turlari bo'yicha tahliliy hisob-kitob
+  const definedCats = ['komp', 'it_foundation', 'it_frontend', 'it_backend', 'indiv'];
+  const allCats = Array.from(new Set([...definedCats, ...S.groups.map(g => g.cat).filter(Boolean)]));
+
+  const courseAnalysis = allCats.map(cat => {
+    const name = COURSE_LABELS[cat] || S.settings?.rates?.[cat]?.name || cat;
+    const inCourse = allS.filter(s => {
+      const g = G(s.g);
+      return (g && g.cat === cat) || (!g && s.rateType === cat);
+    });
+    const cTotal = inCourse.length;
+    const cStudying = inCourse.filter(s => !sArch(s)).length;
+    const cMonthLeft = inCourse.filter(s => s.out && s.out.slice(0, 7) === m && s.outT !== 'grad').length;
+    const cMonthGrad = inCourse.filter(s => s.out && s.out.slice(0, 7) === m && s.outT === 'grad').length;
+    const cTotalLeft = inCourse.filter(s => s.out && s.outT !== 'grad').length;
+    const cTotalGrad = inCourse.filter(s => s.out && s.outT === 'grad').length;
+    const cRetention = cTotal > 0 ? Math.round(cStudying / cTotal * 100) : 0;
+    return { cat, name, total: cTotal, studying: cStudying, monthLeft: cMonthLeft, monthGrad: cMonthGrad, totalLeft: cTotalLeft, totalGrad: cTotalGrad, retention: cRetention };
+  }).filter(c => c.total > 0 || S.groups.some(g => g.cat === c.cat));
+
+  return `<div class="head">
+    <div>
+      <h1>MD O'quvchilar</h1>
+      <p class="mut">Barcha guruhlardagi o'quvchilar ro'yxati, to'lovlari va oylik monitoringi</p>
+    </div>
+    <div class="btns">
+      <button data-act="sform" data-g="${ctx.f || ''}">+ Yangi o'quvchi qo'shish</button>
+    </div>
+  </div>
+
+  <!-- Yuqori KPI statistikalar -->
+  <div class="stats" style="margin-bottom:20px">
+    ${stat("Jami o'quvchilar", totalStudents + " ta", "Tizimdagi barcha ro'yxatdagilar", "blue")}
+    ${stat("O'qiyotgan jami o'quvchilar", studyingCount + " ta", "Hozirda faol ta'lim olayotganlar", "green")}
+    ${stat("Bu oy ketgan o'quvchilar", thisMonthLeft.length + " ta", (thisMonthGrad.length ? `+${thisMonthGrad.length} ta bitirdi | ` : "") + fmonth(m) + " oyi bo'yicha", thisMonthLeft.length > 0 ? "warn" : "green")}
+    ${stat("Umumiy ketgan o'quvchilar", totalLeft.length + " ta", `Bitirganlar: ${totalGrad.length} ta | Jami: ${totalOut.length} ta`, totalLeft.length > 0 ? "bad" : "green")}
+  </div>
+
+  <!-- Kurslar turlariga qarab tahlil bloki -->
+  <div class="card" style="margin-bottom:20px">
+    <div class="head" style="margin-bottom:12px">
+      <div>
+        <h2>B Kurslar turlari bo'yicha o'quvchilar monitoringi</h2>
+        <p class="mut">Har bir kurs yo'nalishidagi o'qiyotgan, bu oy ketgan, umumiy ketgan va bitirgan o'quvchilar tahlili</p>
+      </div>
+    </div>
+    ${tbl([
+      ["Kurs / Yo'nalish"],
+      ["O'qiyotgan jami", "c"],
+      ["Bu oy ketgan", "c"],
+      ["Umumiy ketgan", "c"],
+      ["Bitirgan", "c"],
+      ["Kursdagi jami", "c"],
+      ["Faollik / Saqlanish darajasi"]
+    ], courseAnalysis.map(c => `<tr>
+      <td><b>${esc(c.name)}</b></td>
+      <td class="c"><span class="badge b-ok" style="font-weight:700">${c.studying} ta</span></td>
+      <td class="c">${c.monthLeft > 0 ? `<span class="badge b-bad">${c.monthLeft} ta</span>` : `<span class="badge b-n">0</span>`}${c.monthGrad > 0 ? `<br><small class="mut">+${c.monthGrad} bitirgan</small>` : ''}</td>
+      <td class="c">${c.totalLeft > 0 ? `<span class="badge b-bad">${c.totalLeft} ta</span>` : `<span class="badge b-n">0</span>`}</td>
+      <td class="c">${c.totalGrad > 0 ? `<span class="badge b-info">${c.totalGrad} ta</span>` : `<span class="badge b-n">0</span>`}</td>
+      <td class="c"><b>${c.total} ta</b></td>
+      <td>
+        <div class="bar-wrap">
+          <div class="bar"><i style="width:${c.retention}%"></i></div>
+          <small><b>${c.retention}%</b> faol (${c.studying}/${c.total})</small>
+        </div>
+      </td>
+    </tr>`), "Hozircha kurslar mavjud emas.")}
+  </div>
+
+  <!-- O'quvchilar ro'yxati -->
+  <div class="card">
+    <div class="head" style="margin-bottom:12px">
+      <div>
+        <h2>O'quvchilar ro'yxati</h2>
+        <p class="mut">Qidirish, kurs toifasi va guruhlar bo'yicha saralash</p>
+      </div>
+    </div>
+    <div class="tools">
+      <input id="sq" placeholder="Ism yoki telefon bo'yicha qidirish..." value="${esc(ctx.q || '')}">
+      <select data-chg="ss">
+        <option value="act" ${sf === 'act' ? 'selected' : ''}>Faol o'quvchilar</option>
+        <option value="arch" ${sf === 'arch' ? 'selected' : ''}>Arxiv (bitirgan va ketgan)</option>
+        <option value="all" ${sf === 'all' ? 'selected' : ''}>Barcha o'quvchilar</option>
+      </select>
+      <select data-chg="scat">
+        <option value="">Barcha kurs turlari</option>
+        ${allCats.map(cat => `<option value="${cat}" ${ctx.scat === cat ? 'selected' : ''}>${esc(COURSE_LABELS[cat] || S.settings?.rates?.[cat]?.name || cat)}</option>`).join('')}
+      </select>
+      <select data-chg="sf">
+        <option value="">Barcha guruhlar</option>
+        ${gopts(ctx.f || '')}
+      </select>
+    </div>
+    <div id="stbl">${stuRows()}</div>
+  </div>`;
+}
+
+/* 5. O'quvchi profili */
+function student() {
+  const s = ST(ctx.id);
+  if (!s) { view = 'students'; return students(); }
+  const g = G(s.g);
+  const a = attStat(s);
+  const m = month();
+  const ps = S.payments.filter(p => p.s === s.id).sort((x, y) => y.date.localeCompare(x.date));
+
+  const attendedLessons = a.lessons.filter(l => l.att[s.id] === 'p');
+  const missedLessons = a.lessons.filter(l => l.att[s.id] === 'a');
+  const excusedLessons = a.lessons.filter(l => l.att[s.id] === 'e');
+
+  return `<div class="head">
+    <div>
+      <a class="back" data-act="nav" data-v="students">&larr; O'quvchilar ro'yxatiga qaytish</a>
+      <h1>${esc(s.name)} ${sBadge(s)}</h1>
+      <p class="mut">Guruh: <b>${esc(g?.name || '-')}</b> | Telefon: <b>${esc(s.phone || 'Kiritilmagan')}</b></p>
+      <p class="mut">Kurs tarifi: <b>${COURSE_LABELS[s.rateType] || 'Standart'}</b> | Oylik to'lov: <b>${fmt(feeOf(s))}</b> ${isExempt(s, m) ? "<span class='badge b-info'>To'lovdan ozod</span>" : ''}</p>
+    </div>
+    <div class="btns">
+      <button data-act="pform" data-id="${s.id}">+ To'lov kiritish</button>
+      <button class="ghost" data-act="setPayMode" data-id="${s.id}">To'lov holatini o'zgartirish</button>
+      ${s.out ? `<button class="ghost" data-act="sback" data-id="${s.id}">Qayta faollashtirish</button>` : `<button class="ghost" data-act="sout" data-id="${s.id}">Ketdi / bitirdi</button>`}
+      <button class="ghost" data-act="sform" data-id="${s.id}">Tahrirlash</button>
+      <button class="danger" data-act="dels" data-id="${s.id}">O'chirish</button>
+    </div>
+  </div>
+
+  <div class="stats">
+    ${stat("Davomat ko'rsatkichi", a.pct == null ? '-' : a.pct + '%', a.p + " ta darsga kelgan", a.pct >= 80 ? 'green' : 'warn')}
+    ${stat("Qatnashgan darslari", a.p + " ta", "Faol qatnashuv", 'green')}
+    ${stat("Sababsiz qoldirgan", a.a + " ta", "Darsga kelmagan kunlari", a.a > 0 ? 'bad' : 'green')}
+    <div class="stat">
+      <b style="font-size:18px;margin-top:2px">${payBadge(s, m)}</b>
+      <span>Joriy oy (${fmonth(m)}) to'lovi</span>
+      <small class="sub">To'langan: ${fmt(paid(s.id, m))}</small>
+    </div>
+  </div>
+
+  <div class="grid2">
+    <section class="card">
+      <h2>Darslarga qatnashish tahlili (Kunlar kesimida)</h2>
+      
+      ${missedLessons.length ? `
+        <div style="margin-bottom:14px">
+          <h3 style="color:var(--bad)">❌ Qatnashmagan kunlari (${missedLessons.length} ta dars):</h3>
+          <div class="att-list">
+            ${missedLessons.map(l => `<span class="att-pill bad" title="${esc(l.topic || '')}">${fdate(l.date)} (${DAYN[wd(l.date)].slice(0,3)})</span>`).join('')}
+          </div>
+        </div>` : "<p class='note success' style='margin-bottom:12px'>Ajoyib! O'quvchi birorta ham darsni sababsiz qoldirmagan.</p>"}
+
+      ${excusedLessons.length ? `
+        <div style="margin-bottom:14px">
+          <h3 style="color:var(--warn)">⚠️ Sababli qoldirgan darslari (${excusedLessons.length} ta):</h3>
+          <div class="att-list">
+            ${excusedLessons.map(l => `<span class="att-pill warn" title="${esc(l.topic || '')}">${fdate(l.date)} (${DAYN[wd(l.date)].slice(0,3)})</span>`).join('')}
+          </div>
+        </div>` : ''}
+
+      ${attendedLessons.length ? `
+        <div>
+          <h3 style="color:var(--ok)">✓ Qatnashgan darslari (${attendedLessons.length} ta):</h3>
+          <div class="att-list" style="max-height:160px;overflow-y:auto">
+            ${attendedLessons.map(l => `<span class="att-pill ok" title="${esc(l.topic || '')}">${fdate(l.date)} (${DAYN[wd(l.date)].slice(0,3)})</span>`).join('')}
+          </div>
+        </div>` : ''}
+
+      <h3 style="margin-top:18px">To'liq davomat jurnali</h3>
+      <div style="max-height:260px;overflow-y:auto">
+        ${tbl([['Sana'], ['Mavzu'], ['Holat']], a.lessons.map(l => `<tr>
+          <td>${fdate(l.date)}</td>
+          <td>${esc(l.topic || '-')}</td>
+          <td>${attBadge(l.att[s.id])}</td>
+        </tr>`), "Davomat ma'lumotlari yo'q.")}
+      </div>
+    </section>
+
+    <section class="card">
+      <div class="head" style="margin:0 0 10px">
+        <h2>To'lovlar tarixi</h2>
+        <button class="sm" data-act="pform" data-id="${s.id}">+ To'lov qo'shish</button>
+      </div>
+      ${tbl([['Sana'], ['Qaysi oy uchun'], ["Summa", 'r'], ['']], ps.map(p => `<tr>
+        <td>${fdate(p.date)}</td>
+        <td><b>${fmonth(p.m)}</b>${p.note ? `<br><small>${esc(p.note)}</small>` : ''}</td>
+        <td class="r"><b>${fmt(p.amt)}</b></td>
+        <td class="r"><a data-act="delp" data-id="${p.id}">O'chirish</a></td>
+      </tr>`), "To'lovlar kiritilmagan.")}
+    </section>
+  </div>
+
+  <section class="card">
+    <h2>O'quvchi bo'yicha izoh va qaydlar</h2>
+    ${comments('student', s.id)}
+  </section>`;
+}
+
+/* 6. To'lovlar bo'limi */
+function pay() {
+  ctx.pg = ctx.pg || 'all';
+  ctx.pm = ctx.pm || month();
+  const m = ctx.pm;
+
+  const st = S.students.filter(s => (ctx.pg === 'all' || s.g === ctx.pg) && (act(s, m) || paid(s.id, m) > 0));
+
+  const exp = st.reduce((a, s) => a + expectedOf(s, m), 0);
+  const got = st.reduce((a, s) => a + paid(s.id, m), 0);
+  const left = st.reduce((a, s) => a + owes(s, m), 0);
+
+  const exemptCount = st.filter(s => isExempt(s, m)).length;
+  const prepaidCount = st.filter(s => isPrepaid(s, m)).length;
+
+  return `<h1>To'lovlar jurnali</h1>
+  <p class="mut" style="margin-bottom:16px">Guruhlar va o'quvchilarning oylik to'lov nazorati. Oldindan to'langan yoki to'lovdan ozod etilganlar kutilgan va qarz hisobida xalaqit bermaydi.</p>
+
+  <div class="stats">
+    ${stat("Kutilgan (Kassa rejasi)", fmt(exp), "Ozod: " + exemptCount + " ta, Oldindan: " + prepaidCount + " ta", 'blue')}
+    ${stat("Yig'ilgan (Haqiqiy kassa)", fmt(got), "Shu oyda to'langan summa", 'green')}
+    ${stat("Qolgan (Qarzdorlik)", fmt(left), "To'lanishi kutilayotgan qoldiq", left > 0 ? 'bad' : 'green')}
+    ${stat("O'qituvchi ulushi (Kassadan)", fmt(Math.round(got * ((S.settings?.teacherBasePercent || 50) / 100))), "O'rtacha " + (S.settings?.teacherBasePercent || 50) + "% foiz bilan")}
+  </div>
+
+  <div class="card">
+    <div class="tools">
+      <label>Guruh bo'yicha filter
+        <select data-chg="pg">${gopts(ctx.pg, true)}</select>
+      </label>
+      <label>Oylik davr
+        <input type="month" data-chg="pm" value="${m}">
+      </label>
+    </div>
+
+    ${tbl([["O'quvchi"], ['Guruh'], ['Tarif / Summa', 'r'], ["To'langan", 'r'], ['Qoldiq (Qarz)', 'r'], ['Holat'], ['Amallar']], st.map(s => {
+      const isEx = isExempt(s, m);
+      const isPre = isPrepaid(s, m);
+      const fee = feeOf(s);
+      const pAmt = paid(s.id, m);
+      const ow = owes(s, m);
+
+      return `<tr>
+        <td><a data-act="ops" data-id="${s.id}"><b>${esc(s.name)}</b></a>${s.phone ? `<br><small>${esc(s.phone)}</small>` : ''}</td>
+        <td>${esc(G(s.g)?.name || '')}</td>
+        <td class="r">${isEx ? '<small class="mut">Ozod (0)</small>' : isPre ? '<small class="mut">Oldindan (0)</small>' : fmt(fee)}</td>
+        <td class="r"><b style="color:var(--ok)">${fmt(pAmt)}</b></td>
+        <td class="r">${ow > 0 ? `<b style="color:var(--bad)">${fmt(ow)}</b>` : '<span style="color:var(--ok)">0</span>'}</td>
+        <td>${payBadge(s, m)}</td>
+        <td class="r">
+          <div class="btns" style="justify-content:flex-end">
+            <button class="sm" data-act="pform" data-id="${s.id}" data-m="${m}">+ To'lov</button>
+            <button class="sm ghost" data-act="quickStatus" data-id="${s.id}" data-m="${m}">Status</button>
+          </div>
+        </td>
+      </tr>`;
+    }), "Bu oy uchun o'quvchilar topilmadi.")}
+  </div>`;
+}
+
+/* 7. O'qituvchi maoshi */
+function salary() {
+  ctx.sm = ctx.sm || month();
+  const m = ctx.sm;
+  const sal = calcSalary(m);
+
+  return `<h1> O'qituvchi Maoshi va Moliyaviy Hisobot</h1>
+  <p class="mut" style="margin-bottom:20px">Guruhlardan tushgan to'lovlar, o'qituvchi foizi, sof daromad va avans hisob-kitobi.</p>
+
+  <div class="tools" style="max-width:320px;margin-bottom:16px">
+    <label>Hisobot oyi
+      <input type="month" data-chg="sm" value="${m}">
+    </label>
+  </div>
+
+  <div class="stats">
+    ${stat("Mening sof maoshim (Yig'ilgandan)", fmt(sal.totalTeacherEarned), "Shu oyda sizga hisoblangan summa", 'green')}
+    ${stat("Kutilgan umumiy maosh", fmt(sal.totalTeacherExpected), "Qarzdorlar ham to'lasa chiqadigan oylik", 'blue')}
+    ${stat("Olingan avanslar", fmt(sal.advances), "Kassadan olingan naqd/plastik", 'warn')}
+    ${stat("Qoldiq berilishi kerak", fmt(sal.remainingToReceive), "Markazdan olinadigan sof balans", sal.remainingToReceive > 0 ? 'green' : 'n')}
+  </div>
+
+  <div class="card">
+    <div class="head">
+      <div>
+        <h2>Guruhlar kesimida oylik daromad taqsimoti (${fmonth(m)})</h2>
+        <p class="mut">Har bir guruhdagi to'lovlar va sizning ulushingiz</p>
+      </div>
+      <button class="sm ghost noprint" onclick="window.print()"> Hisobotni chop etish</button>
+    </div>
+
+    ${tbl([['Guruh va Yo\'nalish'], ["O'quvchilar soni"], ["Kassa tushumi", 'r'], ['Sizning foizingiz', 'c'], ["Sizga tegishli maosh", 'r'], ['Kutilgan to\'liq ulush', 'r'], ['Yo\'qotilayotgan summa', 'r']], sal.groupBreakdown.map(gb => {
+      return `<tr>
+        <td><b>${esc(gb.group.name)}</b><br><small class="mut">${COURSE_LABELS[gb.group.cat] || 'Kurs'}</small></td>
+        <td><b>${gb.stCount}</b> ta (${gb.paidCount} to'lagan, ${gb.debtCount} qarzdor)</td>
+        <td class="r"><b>${fmt(gb.grpPaid)}</b></td>
+        <td class="c"><span class="badge b-info">${gb.pct}%</span></td>
+        <td class="r"><b style="color:var(--ok);font-size:15px">${fmt(gb.teacherEarned)}</b></td>
+        <td class="r">${fmt(gb.teacherExp)}</td>
+        <td class="r">${gb.lostSalary > 0 ? `<span style="color:var(--bad)">-${fmt(gb.lostSalary)}</span>` : '<span style="color:var(--ok)">✓ 0</span>'}</td>
+      </tr>`;
+    }), "Guruhlar ma'lumotlari topilmadi.")}
+  </div>
+
+  <div class="grid2">
+    <section class="card">
+      <div class="head" style="margin:0 0 10px">
+        <h2>Olingan avans va to'lovlar</h2>
+        <button class="sm" data-act="addAdvance" data-m="${m}">+ Avans qo'shish</button>
+      </div>
+      ${tbl([['Sana'], ['Summa', 'r'], ['Izoh'], ['']], (S.salaries || []).filter(s => s.m === m).map(salRow => `<tr>
+        <td>${fdate(salRow.date)}</td>
+        <td class="r"><b>${fmt(salRow.amt)}</b></td>
+        <td>${esc(salRow.note || 'Avans')}</td>
+        <td class="r"><a data-act="delSal" data-id="${salRow.id}">O'chirish</a></td>
+      </tr>`), "Bu oyda avans olinmagan.")}
+    </section>
+
+    <section class="card">
+      <h2>O'qituvchi stavkasi va sozlamalari</h2>
+      <p class="mut">Kurslar bo'yicha foizlar va standart narxlar «Sozlamalar &rarr; Tariflar» bo'limida o'rnatiladi.</p>
+      <div style="background:#F8FAFC;padding:12px;border-radius:6px;border:1px solid #E2E8F0;font-size:13.5px">
+        <p>Standart o'qituvchi ulushi: <b>${S.settings?.teacherBasePercent || 50}%</b></p>
+        <p>Kompyuter savodxonligi: <b>${S.settings?.rates?.komp?.teacherPercent || 50}%</b></p>
+        <p>IT dasturlash: <b>${S.settings?.rates?.it_foundation?.teacherPercent || 50}%</b></p>
+        <p>Individual ta'lim: <b>${S.settings?.rates?.indiv?.teacherPercent || 60}%</b></p>
+      </div>
+    </section>
+  </div>`;
+}
+
+/* 8. Oylik davomat */
+const amode = () => {
+  const g = G(ctx.ag);
+  const m = ctx.ak || (g && g.start ? 'course' : 'cal');
+  return m === 'course' && !(g && g.start) ? 'cal' : m;
+};
+
+function attView() {
+  if (!S.groups.length) return `<h1>Oylik davomat</h1><div class="card"><p class="mut">Avval guruh yarating.</p></div>`;
+  if (!G(ctx.ag)) { ctx.ag = defG(); ctx.ac = null; }
+  const g = G(ctx.ag), td = today(), eff = gEnd(g), mode = amode();
+  ctx.am = ctx.am || month();
+
+  let from, to, prevOff = false, nextOff = false, plabel = '';
+  if (mode === 'course') {
+    if (ctx.ac == null) {
+      let k = 0;
+      while (addM(g.start, k + 1) <= td && (!eff || addM(g.start, k + 1) <= eff)) k++;
+      ctx.ac = k;
+    }
+    from = addM(g.start, ctx.ac);
+    to = addD(addM(g.start, ctx.ac + 1), -1);
+    prevOff = ctx.ac <= 0;
+    nextOff = !!eff && addM(g.start, ctx.ac + 1) > eff;
+    plabel = (ctx.ac + 1) + "-oy: " + fdate(from) + " - " + fdate(to);
+  } else {
+    const m = ctx.am;
+    from = m + '-01';
+    to = m + '-' + p2(new Date(+m.slice(0, 4), +m.slice(5, 7), 0).getDate());
+    plabel = fdate(from) + " - " + fdate(to);
+  }
+
+  const L = {}, sym = { p: '✓', a: '✗', e: 'S' };
+  S.lessons.filter(l => l.g === g.id && l.date >= from && l.date <= to).forEach(l => L[l.date] = l);
+  const st = S.students.filter(s => s.g === g.id && (!s.out || s.out >= from)).sort((a, b) => a.name.localeCompare(b.name));
+  const ds = [];
+  for (let dt = from; dt <= to; dt = addD(dt, 1)) {
+    if (L[dt] || (inSpan(g, dt) && (!(g.days || []).length || g.days.includes(wd(dt))))) ds.push(dt);
+  }
+
+  const head = `<tr><th>O'quvchi</th>${ds.map(dt => `<th class="dc${dt === td ? ' tdy' : ''}${wd(dt) > 4 ? ' wkn' : ''}"><a data-act="day" data-id="${dt}" title="${esc(L[dt] && L[dt].topic || 'Mavzu kiritilmagan')}">${+dt.slice(8)}<br><small>${DAYS[wd(dt)]}</small></a><a data-act="allday" data-id="${dt}" class="al" title="Hammasi keldi">${L[dt] && L[dt].topic ? '●' : '✓'}</a></th>`).join('')}<th>Keldi</th><th>Kelmadi</th><th>Sababli</th><th>%</th></tr>`;
+
+  const rows = st.map(s => {
+    let p = 0, a = 0, e = 0;
+    const cells = ds.map(dt => {
+      const v = (L[dt] && L[dt].att && L[dt].att[s.id]) || '';
+      if (v === 'p') p++; else if (v === 'a') a++; else if (v === 'e') e++;
+      return `<td><button type="button" class="cell ${v ? 'v-' + v : ''}" data-act="cell" data-id="${s.id}" data-d="${dt}" title="${fdate(dt)}">${sym[v] || '·'}</button></td>`;
+    }).join('');
+    const t = p + a + e;
+    return `<tr><td><a data-act="ops" data-id="${s.id}"><b>${esc(s.name)}</b></a>${s.out ? ' <small>(' + sState(s)[0].toLowerCase() + ')</small>' : ''}</td>${cells}<td>${p}</td><td>${a}</td><td>${e}</td><td><b>${t ? Math.round(p / t * 100) + '%' : '-'}</b></td></tr>`;
+  }).join('');
+
+  const sum = `<tr class="sum"><td>Jami kelganlar</td>${ds.map(dt => `<td>${st.filter(s => L[dt] && L[dt].att && L[dt].att[s.id] === 'p').length || ''}</td>`).join('')}<td colspan="4"></td></tr>`;
+
+  return `<div class="head">
+    <div>
+      <h1>Oylik davomat jurnali</h1>
+      <p class="mut">Katakchani bosing: <b>✓</b> keldi, <b>✗</b> kelmadi, <b>S</b> sababli. Kun raqamini bossangiz dars mavzusi ochiladi.</p>
+    </div>
+    <button class="ghost noprint" onclick="window.print()"> Chop etish</button>
+  </div>
+
+  <div class="card">
+    <div class="tools">
+      <label>Guruh
+        <select data-chg="ag">${gopts(g.id)}</select>
+      </label>
+      <label>Ko'rinish rejimi
+        <select data-chg="ak">
+          <option value="course" ${mode === 'course' ? 'selected' : ''} ${g.start ? '' : 'disabled'}>Kurs oyi (boshlangan sanadan 1 oy)</option>
+          <option value="cal" ${mode === 'cal' ? 'selected' : ''}>Taqvim oyi</option>
+        </select>
+      </label>
+      ${mode === 'cal' ? `<label>Oy<input type="month" data-chg="am" value="${ctx.am}"></label>` : ''}
+    </div>
+
+    <div style="display:flex;gap:12px;align-items:center;margin-bottom:14px;flex-wrap:wrap">
+      <button class="ghost sm" data-act="mm" data-id="-1" ${prevOff ? 'disabled' : ''}>&larr; Oldingi davr</button>
+      <b>${plabel}</b>
+      <button class="ghost sm" data-act="mm" data-id="1" ${nextOff ? 'disabled' : ''}>Keyingi davr &rarr;</button>
+    </div>
+
+    <div class="leg" style="display:flex;gap:12px;font-size:12.5px;margin-bottom:14px;flex-wrap:wrap">
+      <span class="badge b-ok">✓ Keldi</span>
+      <span class="badge b-bad">✗ Kelmadi</span>
+      <span class="badge b-warn">S Sababli</span>
+      <span>● Mavzu kiritilgan</span>
+    </div>
+
+    ${st.length ? `<div class="tw gt"><table><thead>${head}</thead><tbody>${rows}${sum}</tbody></table></div>` : "<p class='mut'>Bu davrda o'quvchilar yo'q.</p>"}
+  </div>`;
+}
+
+/* 9. Kundalik va Mavzular */
+function diaryView() {
+  if (!S.groups.length) return `<h1>Kundalik va mavzular</h1><div class="card"><p class="mut">Avval guruh yarating.</p></div>`;
+  if (!G(ctx.dg)) ctx.dg = defG();
+  ctx.dw = ctx.dw || mon(today());
+  const g = G(ctx.dg), td = today();
+  const top = getTopicStats(g);
+
+  const cards = [0, 1, 2, 3, 4, 5, 6].map(i => {
+    const dt = addD(ctx.dw, i), l = S.lessons.find(x => x.g === g.id && x.date === dt);
+    const isL = ((g.days || []).includes(i) && inSpan(g, dt)) || !!l;
+    const v = l ? Object.values(l.att || {}) : [];
+    return `<div class="dy ${isL ? 'ls' : 'off'} ${dt === td ? 'tn' : ''}">
+      <div class="dh"><b>${DAYN[i]}</b><span>${fdate(dt).slice(0, 5)}</span></div>
+      ${l && l.topic ? `<div class="tp">${esc(l.topic)}</div>` : isL ? '<div class="mut">Mavzu kiritilmagan</div>' : '<div>Dars kuni emas</div>'}
+      ${l && l.note ? `<small>${esc(l.note.slice(0, 80))}</small>` : ''}
+      ${v.length ? `<small>Keldi: <b>${v.filter(x => x === 'p').length}</b> / ${v.length}</small>` : ''}
+      <button class="${l ? 'ghost ' : ''}sm" data-act="day" data-id="${dt}">${l ? 'Tahrirlash' : '+ Dars otish'}</button>
+    </div>`;
+  }).join('');
+
+  return `<div class="head">
+    <div>
+      <h1>Kundalik va Mavzular</h1>
+      <p class="mut">Hafta: <b>${fdate(ctx.dw)} - ${fdate(addD(ctx.dw, 6))}</b></p>
+    </div>
+    <div class="btns">
+      <button class="ghost" data-act="wk" data-id="-7">&larr; Oldingi hafta</button>
+      <button class="ghost" data-act="wk" data-id="0">Shu hafta</button>
+      <button class="ghost" data-act="wk" data-id="7">Keyingi hafta &rarr;</button>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="tools">
+      <label>Guruhni tanlang
+        <select data-chg="dg">${gopts(g.id)}</select>
+      </label>
+    </div>
+
+    <div class="note info">
+      <div>
+        <b>Navbatdagi tavsiya etilgan mavzu:</b> ${esc(top.next)}<br>
+        <small>Mavzular progressi: ${top.covered} / ${top.total} ta o'tilgan (${top.remaining} ta qoldi)</small>
+      </div>
+    </div>
+
+    <div class="wk">${cards}</div>
+  </div>`;
+}
+
+/* 10. Dars o'tkazish formasi */
+function lesson() {
+  if (!S.groups.length) return `<h1>Dars va davomat</h1><div class="card"><p class="mut">Avval guruh yarating.</p></div>`;
+  if (!G(ctx.lg)) ctx.lg = defG();
+  ctx.ld = ctx.ld || today();
+  const g = G(ctx.lg);
+  const l = S.lessons.find(x => x.g === g.id && x.date === ctx.ld);
+  const st = S.students.filter(s => s.g === g.id && (!s.out || s.out >= ctx.ld));
+  const cur = s => (l && l.att && l.att[s.id]) || (l && Object.keys(l.att || {}).length ? '' : 'p');
+  const top = getTopicStats(g);
+
+  return `<div class="head">
+    <div>
+      <a class="back" data-act="nav" data-v="${ctx.back || 'diary'}">&larr; Orqaga qaytish</a>
+      <h1>Dars o'tkazish: ${DAYN[wd(ctx.ld)]}, ${fdate(ctx.ld)}</h1>
+      <p class="mut">Guruh: <b>${esc(g.name)}</b> (${COURSE_LABELS[g.cat] || 'Kurs'})</p>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="tools">
+      <label>Guruh
+        <select data-chg="lg">${gopts(g.id)}</select>
+      </label>
+      <label>Sana
+        <input type="date" data-chg="ld" value="${ctx.ld}">
+      </label>
+    </div>
+
+    <form id="lf">
+      <div style="display:flex;gap:10px;align-items:flex-end;margin-bottom:14px">
+        <label style="flex:1;margin-bottom:0">Dars mavzusi
+          <input name="topic" id="inpTopic" list="tl" value="${esc(l?.topic || (l ? '' : top.next))}" placeholder="Mavzuni yozing yoki rejadagidan tanlang" required>
+        </label>
+        <button type="button" class="ghost sm" style="height:42px" data-act="setNextTopic" data-next="${esc(top.next)}">Keyingi mavzuni qo'yish</button>
+      </div>
+      <datalist id="tl">${(g.plan || []).map(t => `<option value="${esc(t)}">`).join('')}</datalist>
+
+      <label>Dars bo'yicha izoh va uyga vazifa
+        <textarea name="note" rows="3" placeholder="Darsda nimalar o'tildi, uy vazifasi...">${esc(l?.note || '')}</textarea>
+      </label>
+
+      <div class="head" style="margin:20px 0 10px">
+        <h2 style="margin:0">O'quvchilar davomati (${st.length})</h2>
+        <button type="button" class="sm ghost" data-act="allp">Hammasi keldi</button>
+      </div>
+
+      ${tbl([['Ism'], ['Davomat holati']], st.map(s => `<tr>
+        <td><b>${esc(s.name)}</b></td>
+        <td style="white-space:nowrap">
+          <div class="seg-group">
+            <label class="seg p"><input type="radio" name="a_${s.id}" value="p" ${cur(s) === 'p' ? 'checked' : ''}><span>✓ Keldi</span></label>
+            <label class="seg a"><input type="radio" name="a_${s.id}" value="a" ${cur(s) === 'a' ? 'checked' : ''}><span>✗ Kelmadi</span></label>
+            <label class="seg e"><input type="radio" name="a_${s.id}" value="e" ${cur(s) === 'e' ? 'checked' : ''}><span>S Sababli</span></label>
+          </div>
+        </td>
+      </tr>`), "Bu guruhda o'quvchilar mavjud emas.")}
+
+      <div class="btns" style="margin-top:20px">
+        <button class="lg">✓ Dars va davomatni saqlash</button>
+        ${l ? `<button type="button" class="danger" data-act="ldel" data-id="${l.id}">Darsni o'chirish</button>` : ''}
+      </div>
+    </form>
+  </div>`;
+}
+
+/* 11. GitHub Bulut Sinxronizatsiyasi */
+function cloudSyncView() {
+  const gh = S.settings?.github || {};
+  const syncCode = gh.token && gh.gistId ? btoa(JSON.stringify({ t: gh.token, g: gh.gistId })) : '';
+
+  return `<h1> GitHub Bulut Sinxronizatsiyasi</h1>
+  <p class="mut" style="margin-bottom:20px">Desktop (Tauri) va Mobil (PWA / APK) o'rtasida ma'lumotlarni bepul GitHub Gist orqali sinxronlash.</p>
+
+  <div class="grid2">
+    <section class="card">
+      <h2>GitHub Ulanish Sozlamalari</h2>
+      <form data-form="gh_save">
+        <label>GitHub Personal Access Token (PAT)
+          <span class="desc">GitHub Profil &rarr; Settings &rarr; Developer Settings &rarr; Tokens (classic) &rarr; gist ruxsatini yoqing.</span>
+          <input type="password" name="token" id="ghToken" value="${esc(gh.token || '')}" placeholder="ghp_xxxxxxxxxxxxxxxxxxxx" required>
+        </label>
+
+        <label>Gist ID
+          <span class="desc">Agar mavjud Gist bo'lsa kiriting, yoki quyidagi tugma bilan yangi oching.</span>
+          <input name="gistId" id="ghGist" value="${esc(gh.gistId || '')}" placeholder="Masalan: 7a8b9c0d1e2f3a4b...">
+        </label>
+
+        <label style="display:flex;align-items:center;gap:10px;cursor:pointer;margin-top:14px">
+          <input type="checkbox" name="autoSync" style="width:auto;margin:0" ${gh.autoSync ? 'checked' : ''}>
+          <span>Avtomatik sinxronizatsiya (O'zgarishlar kiritilganda avtomatik GitHub-ga saqlash)</span>
+        </label>
+
+        <div class="btns" style="margin-top:16px">
+          <button>Sozlamalarni saqlash</button>
+          ${!gh.gistId ? `<button type="button" class="ghost" data-act="createGist">Yangi Gist yaratish</button>` : ''}
+        </div>
+      </form>
+    </section>
+
+    <section class="card">
+      <h2>Desktop va Mobil Sinxronlash Amallari</h2>
+      
+      <div style="background:#F8FAFC;padding:14px;border-radius:8px;border:1px solid #E2E8F0;margin-bottom:16px">
+        <p>Holat: <b>${gh.gistId ? '<span style="color:var(--ok)">✓ Uланган</span>' : '<span style="color:var(--warn)">Ulanmagan</span>'}</b></p>
+        <p>Oxirgi sinxronlash: <b>${gh.lastSync ? new Date(gh.lastSync).toLocaleString() : 'Hali amalga oshirilmagan'}</b></p>
+      </div>
+
+      <div class="btns" style="flex-direction:column;align-items:stretch;gap:10px">
+        <button class="lg" data-act="pushCloud">Te GitHub-ga yuborish (Desktopdan bulutga)</button>
+        <button class="lg ghost" data-act="pullCloud">Pa GitHub-dan yuklab olish (Bulutdan qabul qilish)</button>
+      </div>
+
+      <h3 style="margin-top:20px">T Mobil telefonga ulash (Sync Code)</h3>
+      <p class="mut" style="font-size:13px">Desktopdagi sozlamalarni mobil telefonga 1 klikda o'tkazish uchun quyidagi koddan foydalaning:</p>
+      ${syncCode ? `
+        <div style="display:flex;gap:8px;margin-top:8px">
+          <input id="syncCodeInp" value="${syncCode}" readonly style="font-size:11px;font-family:monospace;background:#F1F5F9">
+          <button class="sm ghost" data-act="copySyncCode">Nusxa olish</button>
+        </div>` : "<p class='mut'>Token va Gist ID ulangandan song ulanish kodi chiqadi.</p>"}
+
+      <div style="margin-top:14px">
+        <label>Boshqa qurilmadan kelgan kodni kiritish:
+          <input id="pasteSyncCode" placeholder="Ulanish kodini shu yerga qo'ying...">
+        </label>
+        <button class="sm ghost" data-act="applySyncCode" style="margin-top:4px">Kodni qo'llash va yuklash</button>
+      </div>
+    </section>
+  </div>`;
+}
+
+/* 12. Sozlamalar va Tariflar */
+function settings() {
+  const rates = S.settings?.rates || DEFAULT_RATES;
+  const curCat = ctx.sylCat || 'it_foundation';
+  const curPlan = getCoursePlan(curCat);
+
+  return `<h1>S Sozlamalar & Kurs Mavzulari</h1>
+  <p class="mut" style="margin-bottom:20px">Oylik to'lov tariflari, kurslar bo'yicha mavzular rejasi, o'qituvchi ulushi va tizim sozlamalari.</p>
+
+  <div class="grid2">
+    <section class="card">
+      <h2>Standart Kurs Tariflari va O'qituvchi Ulushi</h2>
+      <p class="mut" style="font-size:13px;margin-bottom:14px">Bu yerda bir marta kiritilgan narxlar o'quvchi qo'shayotganda avtomatik tushadi.</p>
+
+      <form data-form="save_rates">
+        <label>Kompyuter savodxonligi kursi oylik to'lovi (so'm)
+          <input type="number" name="rate_komp" value="${rates.komp?.fee || 250000}" required>
+        </label>
+        <label>Kompyuter savodxonligi o'qituvchi ulushi (%)
+          <input type="number" name="pct_komp" value="${rates.komp?.teacherPercent || 50}" min="1" max="100" required>
+        </label>
+
+        <label>IT dasturlash: Foundation to'lovi (so'm)
+          <input type="number" name="rate_it_foundation" value="${rates.it_foundation?.fee || 350000}" required>
+        </label>
+        <label>IT Foundation o'qituvchi ulushi (%)
+          <input type="number" name="pct_it_foundation" value="${rates.it_foundation?.teacherPercent || 50}" min="1" max="100" required>
+        </label>
+
+        <label>IT dasturlash: Frontend to'lovi (so'm)
+          <input type="number" name="rate_it_frontend" value="${rates.it_frontend?.fee || 450000}" required>
+        </label>
+        <label>IT Frontend o'qituvchi ulushi (%)
+          <input type="number" name="pct_it_frontend" value="${rates.it_frontend?.teacherPercent || 50}" min="1" max="100" required>
+        </label>
+
+        <label>IT dasturlash: Backend to'lovi (so'm)
+          <input type="number" name="rate_it_backend" value="${rates.it_backend?.fee || 500000}" required>
+        </label>
+        <label>IT Backend o'qituvchi ulushi (%)
+          <input type="number" name="pct_it_backend" value="${rates.it_backend?.teacherPercent || 50}" min="1" max="100" required>
+        </label>
+
+        <label>Individual ta'lim to'lovi (so'm)
+          <input type="number" name="rate_indiv" value="${rates.indiv?.fee || 800000}" required>
+        </label>
+        <label>Individual ta'lim o'qituvchi ulushi (%)
+          <input type="number" name="pct_indiv" value="${rates.indiv?.teacherPercent || 60}" min="1" max="100" required>
+        </label>
+
+        <button style="margin-top:10px">Tariflarni saqlash</button>
+      </form>
+    </section>
+
+    <section class="card">
+      <h2>Kirish ma'lumotlarini o'zgartirish</h2>
+      <form data-form="cred">
+        <label>Joriy parol
+          <input type="password" name="old" required>
+        </label>
+        <label>Yangi login
+          <input name="u" required value="${esc(S.auth.u)}">
+        </label>
+        <label>Yangi parol (o'zgartirmasangiz, bo'sh qoldiring)
+          <input type="password" name="n1">
+        </label>
+        <label>Yangi parolni takrorlang
+          <input type="password" name="n2">
+        </label>
+        <div class="err" id="ce" style="color:var(--bad);font-size:13px;margin-bottom:8px"></div>
+        <button>O'zgarishni saqlash</button>
+      </form>
+
+      <h2 style="margin-top:24px">Zaxira nusxa (Fayl orqali)</h2>
+      <div class="btns">
+        <button class="ghost" data-act="export">JSON yuklab olish</button>
+        <label class="btn ghost" style="margin:0;background:#fff;color:var(--ac)">JSON tiklash<input type="file" accept=".json,application/json" id="imp" hidden></label>
+      </div>
+    </section>
+
+    <!-- Har bir kurs uchun alohida mavzular biriktirish -->
+    <section class="card" style="grid-column: 1 / -1; margin-top: 6px">
+      <div class="head" style="margin-bottom:12px">
+        <div>
+          <h2>S Har bir kurs uchun dars mavzulari (Syllabus)</h2>
+          <p class="mut">Guruh yaratilayotganda kurs biriktirilganda, ushbu mavzular avtomatik yangi guruhga kiritiladi. Bu yerda har bir kurs mavzularini erkin tahrirlashingiz va saqlashingiz mumkin.</p>
+        </div>
+      </div>
+
+      <div class="pill-filter" style="margin-bottom:16px">
+        ${Object.keys(COURSE_LABELS).filter(k => k !== 'other').map(cat => {
+          const active = curCat === cat;
+          return `<button type="button" class="pill-btn ${active ? 'on' : ''}" data-act="selSylCat" data-cat="${cat}">${COURSE_LABELS[cat]}</button>`;
+        }).join('')}
+      </div>
+
+      <div style="background:var(--pane-sub);border:1px solid var(--line);border-radius:8px;padding:16px">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;flex-wrap:wrap;gap:10px">
+          <h3 style="margin:0">${COURSE_LABELS[curCat] || curCat} kursi dars rejasi</h3>
+          <span class="badge b-ok">${curPlan.length} ta mavzu mavjud</span>
+        </div>
+        <p class="mut" style="font-size:13px;margin-bottom:10px">Har bir mavzuni yangi qatordan yozing (masalan: <i>1. Dasturlashga kirish...</i>):</p>
+        <textarea id="sylPlanText" rows="12" style="font-family:monospace;font-size:13px;line-height:1.6;margin-bottom:12px;background:#fff">${esc(curPlan.join('\n'))}</textarea>
+        <div class="btns">
+          <button data-act="saveSylPlan" data-cat="${curCat}">S Ushbu kurs mavzularini saqlash</button>
+          <button class="ghost" data-act="resetSylPlan" data-cat="${curCat}">R Standart shablonga qaytarish</button>
+        </div>
+      </div>
+    </section>
+  </div>`;
+}
+
+/* 13. Qaydnoma (Notes / Eslatmalar) */
+function notesView() {
+  const notes = S.notes || [];
+  const q = (ctx.noteQ || '').toLowerCase();
+  const catFilter = ctx.noteCat || 'all';
+
+  const categories = ['all', 'Umumiy', 'Darslar', "O'quvchilar", 'Guruhlar', 'Moliyaviy', 'Muhim vazifalar'];
+
+  let filtered = notes.filter(n => {
+    if (catFilter !== 'all' && n.category !== catFilter) return false;
+    if (q) {
+      const matchTitle = (n.title || '').toLowerCase().includes(q);
+      const matchContent = (n.content || '').toLowerCase().includes(q);
+      if (!matchTitle && !matchContent) return false;
+    }
+    return true;
+  });
+
+  // Pinned birinchi, so'ngra updatedAt yoki createdAt bo'yicha saralash
+  filtered.sort((a, b) => {
+    if (a.pinned !== b.pinned) return a.pinned ? -1 : 1;
+    const timeA = a.updatedAt || a.createdAt || '';
+    const timeB = b.updatedAt || b.createdAt || '';
+    return timeB.localeCompare(timeA);
+  });
+
+  const pinnedCount = notes.filter(n => n.pinned).length;
+
+  return `<div class="head">
+    <div>
+      <h1>Q Qaydnoma & Shaxsiy Eslatmalar</h1>
+      <p class="mut">Darslar, o'quvchilar, guruhlar va markaz bo'yicha eslatmalar, qaydlar va muhim topshiriqlar</p>
+    </div>
+    <div class="btns">
+      <button data-act="openAddNote">+ Yangi qayd yozish</button>
+    </div>
+  </div>
+
+  <div class="card" style="margin-bottom:20px">
+    <div class="tools" style="margin-bottom:12px">
+      <input id="noteSearchInp" placeholder="Qaydlardan qidirish (sarlavha yoki matn)..." value="${esc(ctx.noteQ || '')}">
+      <select data-chg="noteCat">
+        <option value="all" ${catFilter === 'all' ? 'selected' : ''}>Barcha toifalar (${notes.length})</option>
+        <option value="Umumiy" ${catFilter === 'Umumiy' ? 'selected' : ''}>Umumiy</option>
+        <option value="Darslar" ${catFilter === 'Darslar' ? 'selected' : ''}>Darslar</option>
+        <option value="O'quvchilar" ${catFilter === "O'quvchilar" ? 'selected' : ''}>O'quvchilar</option>
+        <option value="Guruhlar" ${catFilter === 'Guruhlar' ? 'selected' : ''}>Guruhlar</option>
+        <option value="Moliyaviy" ${catFilter === 'Moliyaviy' ? 'selected' : ''}>Moliyaviy</option>
+        <option value="Muhim vazifalar" ${catFilter === 'Muhim vazifalar' ? 'selected' : ''}>Muhim vazifalar</option>
+      </select>
+    </div>
+    <div class="pill-filter" style="margin:0">
+      ${categories.map(c => `<button class="pill-btn ${catFilter === c ? 'on' : ''}" data-act="setNoteCat" data-cat="${c}">${c === 'all' ? 'Barchasi (' + notes.length + ')' : c}</button>`).join('')}
+    </div>
+  </div>
+
+  <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px">
+    <small class="mut">Topilgan qaydlar: <b>${filtered.length} ta</b> ${pinnedCount > 0 ? `(📌 Qadalgan: ${pinnedCount} ta)` : ''}</small>
+  </div>
+
+  ${filtered.length ? `<div class="notes-grid">
+    ${filtered.map(n => `
+      <div class="note-card note-${n.color || 'blue'} ${n.pinned ? 'pinned' : ''}">
+        <div>
+          <div class="note-head">
+            <span class="badge ${n.category === 'Muhim vazifalar' ? 'b-bad' : n.category === 'Moliyaviy' ? 'b-ok' : 'b-info'}">${esc(n.category || 'Umumiy')}</span>
+            <div class="note-actions">
+              <button class="sm ghost" data-act="togglePinNote" data-id="${n.id}" title="${n.pinned ? 'Qadashni bekor qilish' : 'Yuqoriga qadash'}" style="padding:2px 8px;font-size:12px">${n.pinned ? '📌 Qadalgan' : '📌 Qadash'}</button>
+              <button class="sm ghost" data-act="openEditNote" data-id="${n.id}" title="Tahrirlash" style="padding:2px 8px;font-size:12px">✏️</button>
+              <button class="sm danger" data-act="delNote" data-id="${n.id}" title="O'chirish" style="padding:2px 8px;font-size:12px">🗑️</button>
+            </div>
+          </div>
+          <h3 class="note-title">${esc(n.title || "Sarlavhasiz qayd")}</h3>
+          <div class="note-body">${esc(n.content || '').replace(/\n/g, '<br>')}</div>
+        </div>
+        <div class="note-meta">
+          <div>🗓️ <b>Yaratilgan:</b> ${fdt(n.createdAt)}</div>
+          <div>✏️ <b>Oxirgi tahrir:</b> ${n.updatedAt ? fdt(n.updatedAt) : '<span style="color:#94A3B8">Hali tahrirlanmagan</span>'}</div>
+        </div>
+      </div>
+    `).join('')}
+  </div>` : `<div class="card" style="text-align:center;padding:48px 16px"><p class="mut" style="font-size:15px;margin-bottom:12px">Hech qanday qaydnoma topilmadi.</p><button data-act="openAddNote">+ Yangi qayd yozish</button></div>`}`;
+}
+
+const VIEWS = { home, groups, group, students, student, lesson, pay, salary, cloud: cloudSyncView, settings, notes: notesView, att: attView, diary: diaryView };
+
+function render() {
+  if (!authed) {
+    app.innerHTML = `<div style="min-height:100vh;display:flex;align-items:center;justify-content:center;padding:16px;background:var(--bg)">
+      <form data-form="login" style="background:#fff;border:1px solid var(--line);border-top:4px solid var(--ac);border-radius:12px;padding:32px;width:100%;max-width:380px;box-shadow:var(--shadow)">
+        <div style="display:flex;align-items:center;gap:10px;margin-bottom:14px">
+          <div class="brand-icon">MD</div>
+          <div>
+            <h1 style="font-size:19px;margin:0">O'quv markaz jurnali</h1>
+            <small class="mut">O'qituvchi & Dasturchi boshqaruvi</small>
+          </div>
+        </div>
+        <p class="mut" style="margin-bottom:18px;font-size:13px">Tizimga kirish uchun login va parolni kiriting.</p>
+        <label>Login<input name="u" autocomplete="username" required value="admin4225"></label>
+        <label>Parol<input type="password" name="p" autocomplete="current-password" required placeholder="pass4225"></label>
+        <div class="err" id="le" style="color:var(--bad);font-size:13px;min-height:20px;margin-bottom:8px"></div>
+        <button style="width:100%;font-size:15px;padding:10px">Tizimga kirish &rarr;</button>
+      </form>
+    </div>`;
+    return;
+  }
+
+  const on = k => view === k || (k === 'groups' && view === 'group') || (k === 'students' && view === 'student') || (k === 'diary' && view === 'lesson') || (k === 'notes' && view === 'notes');
+
+  app.innerHTML = `<div class="shell">
+    <aside>
+      <div class="brand">
+        <div class="brand-title">
+          <div class="brand-icon">MD</div>
+          <div>
+            <b>O'quv markaz</b>
+            <small>Senior Teacher CRM</small>
+          </div>
+        </div>
+        <div class="brand-actions">
+          <div class="sync-dot ${syncStatus === 'ok' ? 'green' : syncStatus === 'syncing' ? 'yellow' : syncStatus === 'err' ? 'red' : ''}" id="sync-dot-m" title="${syncStatus === 'ok' ? 'Bulut: Sinxronlangan' : 'Lokal rejim'}"></div>
+          <button data-act="logout" class="sm ghost" style="padding:4px 8px;font-size:12px;color:#CBD5E1;border-color:#334155;background:transparent">Chiqish</button>
+        </div>
+      </div>
+      <nav id="topNav">
+        <a href="#" data-act="nav" data-v="home" class="${on('home') ? 'on' : ''}"><span class="icon">B</span> Boshqaruv paneli</a>
+        <a href="#" data-act="nav" data-v="groups" class="${on('groups') ? 'on' : ''}"><span class="icon">B</span> Guruhlar</a>
+        <a href="#" data-act="nav" data-v="students" class="${on('students') ? 'on' : ''}"><span class="icon">MD</span> O'quvchilar</a>
+        <a href="#" data-act="nav" data-v="notes" class="${on('notes') ? 'on' : ''}"><span class="icon">Q</span> Qaydnoma</a>
+        <a href="#" data-act="nav" data-v="att" class="${on('att') ? 'on' : ''}"><span class="icon">OD</span> Oylik davomat</a>
+        <a href="#" data-act="nav" data-v="diary" class="${on('diary') ? 'on' : ''}"><span class="icon">KM</span> Kundalik & mavzular</a>
+        <a href="#" data-act="nav" data-v="pay" class="${on('pay') ? 'on' : ''}"><span class="icon">To'</span> To'lovlar</a>
+        <a href="#" data-act="nav" data-v="salary" class="${on('salary') ? 'on' : ''}"><span class="icon">M</span> <b>Maoshim & Moliya</b></a>
+        <a href="#" data-act="nav" data-v="cloud" class="${on('cloud') ? 'on' : ''}"><span class="icon">G</span> GitHub Bulut</a>
+        <a href="#" data-act="nav" data-v="settings" class="${on('settings') ? 'on' : ''}"><span class="icon">S</span> Sozlamalar</a>
+      </nav>
+      <div class="side-foot">
+        <div class="sync-indicator">
+          <div class="sync-dot ${syncStatus === 'ok' ? 'green' : syncStatus === 'syncing' ? 'yellow' : syncStatus === 'err' ? 'red' : ''}" id="sync-dot"></div>
+          <span id="sync-text">${syncStatus === 'ok' ? 'Bulut: Sinxronlangan' : syncStatus === 'syncing' ? 'Bulut: Saqlanmoqda...' : syncStatus === 'err' ? 'Bulut: Xatolik' : 'Bulut: Lokal rejim'}</span>
+        </div>
+        <button data-act="logout">Chiqish</button>
+      </div>
+    </aside>
+
+    <main>
+      ${VIEWS[view] ? VIEWS[view]() : home()}
+    </main>
+  </div>`;
+
+  if (keep) {
+    scrollTo(sx, sy);
+    const w = $('.gt');
+    if (w) w.scrollLeft = sl;
+  } else scrollTo(0, 0);
+  keep = false;
+}
+
+const go = (v, c) => { view = v; if (c) Object.assign(ctx, c); render(); };
+
+const A = {
+  nav: (id, t) => { view = t.dataset.v; render(); },
+  logout: () => { authed = false; try { sessionStorage.removeItem('mk'); } catch (e) {} render(); },
+  gs: id => { ctx.gs = id; render(); },
+  opg: id => go('group', { id }),
+  ops: id => go('student', { id }),
+  openl: id => { const l = S.lessons.find(x => x.id === id); ctx.back = 'group'; go('lesson', { lg: l.g, ld: l.date }); },
+  lessonfor: id => { ctx.back = 'group'; go('lesson', { lg: id, ld: today() }); },
+  day: id => { ctx.back = view; ctx.lg = view === 'att' ? ctx.ag : view === 'diary' ? ctx.dg : ctx.lg; ctx.ld = id; view = 'lesson'; render(); },
+  setNextTopic: (id, t) => { const inp = $('#inpTopic'); if (inp && t.dataset.next) inp.value = t.dataset.next; },
+  cell: (id, t) => {
+    let l = S.lessons.find(x => x.g === ctx.ag && x.date === t.dataset.d);
+    if (!l) { l = { id: uid(), g: ctx.ag, date: t.dataset.d, topic: '', note: '', att: {}, files: [] }; S.lessons.push(l); }
+    if (!l.att) l.att = {};
+    const c = l.att[id];
+    const n = { undefined: 'p', p: 'a', a: 'e' }[c];
+    if (n) l.att[id] = n; else delete l.att[id];
+    hold(); commit();
+  },
+  allday: id => {
+    let l = S.lessons.find(x => x.g === ctx.ag && x.date === id);
+    if (!l) { l = { id: uid(), g: ctx.ag, date: id, topic: '', note: '', att: {}, files: [] }; S.lessons.push(l); }
+    if (!l.att) l.att = {};
+    S.students.filter(s => s.g === ctx.ag && (!s.out || s.out >= id)).forEach(s => l.att[s.id] = 'p');
+    hold(); commit();
+  },
+  allp: () => $$('#lf input[value="p"]').forEach(i => i.checked = true),
+  mm: id => {
+    if (amode() === 'course') ctx.ac = Math.max(0, (ctx.ac || 0) + +id);
+    else {
+      const d = new Date(+ctx.am.slice(0, 4), +ctx.am.slice(5, 7) - 1 + +id, 1);
+      ctx.am = d.getFullYear() + '-' + p2(d.getMonth() + 1);
+    }
+    render();
+  },
+  wk: id => { ctx.dw = id === '0' ? mon(today()) : addD(ctx.dw, +id); render(); },
+
+  gform: id => {
+    const g = id && G(id);
+    const initialCat = g?.cat || 'it_foundation';
+    const initialPlan = g ? (g.plan || []) : getCoursePlan(initialCat);
+    modal(g ? 'Guruhni tahrirlash' : 'Yangi guruh ochish', [
+      { l: 'Guruh nomi', n: 'name', req: 1, p: 'Masalan: IT-Frontend-14' },
+      { l: "Fan / Kurs toifasi", n: 'cat', t: 'sel', o: [
+        ['it_foundation', "IT dasturlash: Foundation"],
+        ['it_frontend', "IT dasturlash: Frontend"],
+        ['it_backend', "IT dasturlash: Backend"],
+        ['komp', "Kompyuter savodxonligi"],
+        ['indiv', "Individual ta'lim"]
+      ], desc: "Kurs tanlanganda oylik to'lov va dars mavzulari avtomatik yuklanadi." },
+      { l: 'Dars jadvali', n: 'sched', p: 'Masalan: Du-Chor-Ju, 14:00' },
+      { l: 'Dars kunlari', n: 'days', t: 'chk' },
+      { l: 'Ochilgan sana', n: 'start', t: 'date' },
+      { l: 'Tugash sanasi', n: 'end', t: 'date' },
+      { l: "Oylik to'lov summasi (so'm)", n: 'fee', t: 'number', min: 0 },
+      { l: "O'qituvchi ulushi foizi (%)", n: 'teacherPercent', t: 'number', min: 1, max: 100 },
+      { l: "Mavzular rejasi (har bir mavzu alohida qatorda)", n: 'plan', t: 'ta', r: 8, desc: "Kurs biriktirilganda mavzular avtomatik to'ldiriladi." }
+    ], g ? { ...g, plan: (g.plan || []).join('\n') } : {
+      cat: initialCat,
+      fee: S.settings?.rates?.[initialCat]?.fee || 350000,
+      teacherPercent: S.settings?.rates?.[initialCat]?.teacherPercent || 50,
+      start: today(),
+      days: [0, 2, 4],
+      plan: initialPlan.join('\n')
+    }, d => {
+      let planList = d.plan.split('\n').map(x => x.trim()).filter(Boolean);
+      if (!planList.length) {
+        planList = getCoursePlan(d.cat);
+      }
+      const o = {
+        name: d.name.trim(),
+        cat: d.cat,
+        sched: d.sched.trim(),
+        start: d.start || '',
+        end: d.end || '',
+        fee: +d.fee || 0,
+        teacherPercent: +d.teacherPercent || 50,
+        days: (d.days || []).map(Number),
+        plan: planList
+      };
+      if (g) Object.assign(g, o);
+      else {
+        const n = { id: uid(), ...o };
+        S.groups.push(n);
+        ctx.id = n.id;
+        view = 'group';
+      }
+      commit();
+    });
+  },
+  gclose: id => { const g = G(id); modal('Guruhni yopish: ' + g.name, [{ l: 'Yopilish sanasi', n: 'date', t: 'date', req: 1 }], { date: today() }, d => { g.closed = d.date; commit(); }); },
+  greopen: id => { const g = G(id); modal('Qayta faollashtirish', [{ l: 'Yangi tugash sanasi', n: 'end', t: 'date' }], { end: '' }, d => { g.closed = ''; g.end = d.end || ''; commit(); }); },
+  delg: id => {
+    if (!confirm("Guruh butunlay o'chirilsinmi?")) return;
+    S.students = S.students.filter(s => s.g !== id);
+    S.lessons = S.lessons.filter(l => l.g !== id);
+    S.groups = S.groups.filter(g => g.id !== id);
+    view = 'groups'; commit();
+  },
+
+  sform: (id, t) => {
+    const s = id && ST(id);
+    const gl = S.groups.filter(g => !gArch(g) || (s && s.g === g.id));
+    if (!gl.length) { alert("Avval guruh yarating!"); return; }
+
+    const defGroup = t?.dataset?.g || ctx.f || gl[0].id;
+    modal(s ? "O'quvchini tahrirlash" : "Yangi o'quvchi qo'shish", [
+      { l: 'Ism va familiya', n: 'name', req: 1, p: 'Masalan: Olimov Sardor' },
+      { l: 'Guruh', n: 'g', t: 'sel', o: gl.map(g => [g.id, g.name + ' (' + (COURSE_LABELS[g.cat] || 'Kurs') + ')']) },
+      { l: 'Kurs / Tarif turi', n: 'rateType', t: 'sel', o: [
+        ['group', "Guruh tarifi bo'yicha (Standart)"],
+        ['komp', "Kompyuter savodxonligi (" + fmt(S.settings?.rates?.komp?.fee) + ")"],
+        ['it_foundation', "IT: Foundation (" + fmt(S.settings?.rates?.it_foundation?.fee) + ")"],
+        ['it_frontend', "IT: Frontend (" + fmt(S.settings?.rates?.it_frontend?.fee) + ")"],
+        ['it_backend', "IT: Backend (" + fmt(S.settings?.rates?.it_backend?.fee) + ")"],
+        ['indiv', "Individual ta'lim (" + fmt(S.settings?.rates?.indiv?.fee) + ")"]
+      ], desc: "Standart holatda guruh narxi olinadi." },
+      { l: "To'lov rejimi / Holati", n: 'payMode', t: 'sel', o: [
+        ['standard', "Oddiy (har oy to'lovchi)"],
+        ['exempt', "To'lovdan ozod etilgan (Grant / Bepul)"],
+        ['prepaid', "Oldindan to'langan (O'tgan oy to'lagan)"]
+      ], desc: "Ozod etilganlar va oldindan to'laganlar kassa qoldig'ida qarz hisoblanmaydi." },
+      { l: 'Telefon raqam', n: 'phone', p: '+998901234567' },
+      { l: "Maxsus individual summa (faqat zarur bo'lsa, aks holda bo'sh qoldiring)", n: 'fee', t: 'number', min: 0 }
+    ], s ? { ...s, fee: s.fee ?? '', rateType: s.rateType || 'group', payMode: s.payMode || 'standard' } : {
+      g: defGroup,
+      rateType: 'group',
+      payMode: 'standard',
+      fee: ''
+    }, d => {
+      const o = {
+        name: d.name.trim(),
+        g: d.g,
+        rateType: d.rateType === 'group' ? (G(d.g)?.cat || 'komp') : d.rateType,
+        payMode: d.payMode,
+        phone: d.phone.trim(),
+        fee: d.fee === '' ? null : +d.fee
+      };
+      if (s) Object.assign(s, o);
+      else S.students.push({ id: uid(), ...o, monthStatus: {}, at: today() });
+      commit();
+    });
+  },
+
+  setPayMode: id => {
+    const s = ST(id);
+    modal("To'lov holatini belgilash: " + s.name, [
+      { l: "Umumiy to'lov holati", n: 'payMode', t: 'sel', o: [
+        ['standard', "Oddiy to'lovchi"],
+        ['exempt', "Doimiy to'lovdan ozod (Grant / Bepul)"],
+        ['prepaid', "Oldindan to'lovchi"]
+      ] }
+    ], { payMode: s.payMode || 'standard' }, d => {
+      s.payMode = d.payMode;
+      commit();
+    });
+  },
+
+  quickStatus: (id, t) => {
+    const s = ST(id), m = t.dataset.m || month();
+    modal("Shu oy to'lov statusi: " + s.name + " (" + fmonth(m) + ")", [
+      { l: "Shu oy uchun holat", n: 'st', t: 'sel', o: [
+        ['normal', "Standart (to'lashi kerak)"],
+        ['prepaid', "Oldindan to'langan (O'tgan oy to'lab qo'ygan)"],
+        ['exempt', "Shu oy to'lovdan ozod etilgan (Grant)"]
+      ], desc: "Oldindan to'lagan yoki ozod qilinganlar kassa qoldig'ida qarz sifatida ko'rinmaydi." }
+    ], { st: s.monthStatus?.[m] || (s.payMode === 'exempt' ? 'exempt' : s.payMode === 'prepaid' ? 'prepaid' : 'normal') }, d => {
+      s.monthStatus = s.monthStatus || {};
+      if (d.st === 'normal') delete s.monthStatus[m];
+      else s.monthStatus[m] = d.st;
+      commit();
+    });
+  },
+
+  sout: id => {
+    const s = ST(id);
+    modal('Ketdi / bitirdi: ' + s.name, [
+      { l: 'Holat', n: 't', t: 'sel', o: [['grad', 'Kursni bitirdi'], ['left', 'Kursni tashlab ketdi']] },
+      { l: 'Sana', n: 'date', t: 'date', req: 1 }
+    ], { t: 'grad', date: today() }, d => { s.out = d.date; s.outT = d.t; commit(); });
+  },
+  sback: id => { const s = ST(id); delete s.out; delete s.outT; commit(); },
+  dels: id => {
+    if (!confirm("O'quvchi va uning barcha to'lovlari butunlay o'chirilsinmi?")) return;
+    S.students = S.students.filter(s => s.id !== id);
+    S.payments = S.payments.filter(p => p.s !== id);
+    view = 'students'; commit();
+  },
+
+  pform: (id, t) => {
+    const s = ST(id), m = t.dataset.m || month();
+    modal("To'lov qabul qilish: " + s.name, [
+      { l: 'Oy', n: 'm', t: 'month', req: 1 },
+      { l: "Summa (so'm)", n: 'amt', t: 'number', req: 1, min: 1 },
+      { l: "To'lov sanasi", n: 'date', t: 'date', req: 1 },
+      { l: 'Izoh (kassa / karta / ota-onasi)', n: 'note', p: 'Naqd yoki Payme/Click' }
+    ], { m, amt: owes(s, m) || feeOf(s), date: today() }, d => {
+      S.payments.push({ id: uid(), s: id, m: d.m, amt: +d.amt, date: d.date, note: d.note.trim() });
+      commit();
+    });
+  },
+  delp: id => { if (confirm("To'lov o'chirilsinmi?")) { S.payments = S.payments.filter(p => p.id !== id); commit(); } },
+
+  addAdvance: (id, t) => {
+    const m = t.dataset.m || month();
+    modal("O'qituvchiga maosh / avans yozish (" + fmonth(m) + ")", [
+      { l: 'Oy', n: 'm', t: 'month', req: 1 },
+      { l: "Summa (so'm)", n: 'amt', t: 'number', req: 1, min: 1 },
+      { l: 'Berilgan sana', n: 'date', t: 'date', req: 1 },
+      { l: 'Izoh', n: 'note', p: 'Avans yoki toliq oylik' }
+    ], { m, amt: 500000, date: today() }, d => {
+      S.salaries = S.salaries || [];
+      S.salaries.push({ id: uid(), m: d.m, amt: +d.amt, date: d.date, note: d.note.trim() });
+      commit();
+    });
+  },
+  delSal: id => { if (confirm("Avans yozuvi o'chirilsinmi?")) { S.salaries = S.salaries.filter(s => s.id !== id); commit(); } },
+
+  ldel: id => { if (confirm("Bu dars va davomati o'chirilsinmi?")) { S.lessons = S.lessons.filter(l => l.id !== id); commit(); } },
+
+  addc: (id, t) => {
+    const v = $('#c_' + t.dataset.k).value.trim();
+    if (!v) return;
+    S.comments = S.comments || [];
+    S.comments.push({ id: uid(), k: t.dataset.k, r: t.dataset.r, t: v, at: now() });
+    commit();
+  },
+  delc: id => { if (confirm("Izoh o'chirilsinmi?")) { S.comments = S.comments.filter(c => c.id !== id); commit(); } },
+
+  pushCloud: () => cloudPush(false),
+  pullCloud: () => cloudPull(false),
+  createGist: () => cloudCreateGist(),
+  copySyncCode: () => {
+    const inp = $('#syncCodeInp');
+    if (inp) {
+      inp.select();
+      navigator.clipboard.writeText(inp.value).then(() => alert("Ulanish kodi nusxalandi! Buni mobil telefonda qo'ying.")).catch(() => {});
+    }
+  },
+  applySyncCode: () => {
+    const raw = ($('#pasteSyncCode')?.value || '').trim();
+    if (!raw) { alert("Ulanish kodini kiriting!"); return; }
+    try {
+      const parsed = JSON.parse(atob(raw));
+      if (!parsed.t || !parsed.g) throw new Error();
+      S.settings.github.token = parsed.t;
+      S.settings.github.gistId = parsed.g;
+      save();
+      cloudPull(false);
+    } catch (e) {
+      alert("Kiritilgan kod noto'g'ri formatda!");
+    }
+  },
+
+  export: () => {
+    const a = document.createElement('a');
+    a.href = URL.createObjectURL(new Blob([JSON.stringify(S, null, 2)], { type: 'application/json' }));
+    a.download = 'markaz-zaxira-' + today() + '.json';
+    a.click();
+    setTimeout(() => URL.revokeObjectURL(a.href), 1000);
+  },
+
+  /* Qaydnoma amallari */
+  openAddNote: () => {
+    modal("Yangi qayd yaratish", [
+      { l: 'Qayd sarlavhasi', n: 'title', req: 1, p: 'Masalan: Ertangi dars uchun eslatma' },
+      { l: 'Toifa', n: 'category', t: 'sel', o: [
+        ['Umumiy', 'Umumiy'],
+        ['Darslar', 'Darslar'],
+        ["O'quvchilar", "O'quvchilar"],
+        ['Guruhlar', 'Guruhlar'],
+        ['Moliyaviy', 'Moliyaviy'],
+        ['Muhim vazifalar', 'Muhim vazifalar']
+      ] },
+      { l: 'Aksent rangi', n: 'color', t: 'sel', o: [
+        ['blue', "Ko'k"],
+        ['emerald', 'Yashil'],
+        ['amber', 'Sariq'],
+        ['rose', 'Qizil'],
+        ['purple', 'Binafsha'],
+        ['slate', 'Kulrang']
+      ] },
+      { l: 'Qayd matni', n: 'content', t: 'ta', r: 7, p: 'Qayd mazmuni...' }
+    ], { title: '', category: 'Umumiy', color: 'blue', content: '' }, d => {
+      S.notes = S.notes || [];
+      S.notes.unshift({
+        id: uid(),
+        title: d.title.trim(),
+        category: d.category,
+        color: d.color,
+        content: d.content.trim(),
+        pinned: false,
+        createdAt: now(),
+        updatedAt: null
+      });
+      commit();
+    });
+  },
+
+  openEditNote: id => {
+    const n = (S.notes || []).find(x => x.id === id);
+    if (!n) return;
+    modal("Qaydni tahrirlash", [
+      { l: 'Qayd sarlavhasi', n: 'title', req: 1, p: 'Sarlavha' },
+      { l: 'Toifa', n: 'category', t: 'sel', o: [
+        ['Umumiy', 'Umumiy'],
+        ['Darslar', 'Darslar'],
+        ["O'quvchilar", "O'quvchilar"],
+        ['Guruhlar', 'Guruhlar'],
+        ['Moliyaviy', 'Moliyaviy'],
+        ['Muhim vazifalar', 'Muhim vazifalar']
+      ] },
+      { l: 'Aksent rangi', n: 'color', t: 'sel', o: [
+        ['blue', "Ko'k"],
+        ['emerald', 'Yashil'],
+        ['amber', 'Sariq'],
+        ['rose', 'Qizil'],
+        ['purple', 'Binafsha'],
+        ['slate', 'Kulrang']
+      ] },
+      { l: 'Qayd matni', n: 'content', t: 'ta', r: 7 }
+    ], { title: n.title, category: n.category || 'Umumiy', color: n.color || 'blue', content: n.content || '' }, d => {
+      n.title = d.title.trim();
+      n.category = d.category;
+      n.color = d.color;
+      n.content = d.content.trim();
+      n.updatedAt = now();
+      commit();
+    });
+  },
+
+  delNote: id => {
+    if (!confirm("Ushbu qaydni o'chirmoqchimisiz?")) return;
+    S.notes = (S.notes || []).filter(x => x.id !== id);
+    commit();
+  },
+
+  togglePinNote: id => {
+    const n = (S.notes || []).find(x => x.id === id);
+    if (n) {
+      n.pinned = !n.pinned;
+      commit();
+    }
+  },
+
+  setNoteCat: (id, t) => {
+    ctx.noteCat = t.dataset.cat;
+    render();
+  },
+
+  /* Kurs mavzulari amallari */
+  selSylCat: (id, t) => {
+    ctx.sylCat = t.dataset.cat;
+    render();
+  },
+
+  saveSylPlan: (id, t) => {
+    const cat = t.dataset.cat;
+    const txt = $('#sylPlanText')?.value || '';
+    const lines = txt.split('\n').map(x => x.trim()).filter(Boolean);
+    S.settings = S.settings || {};
+    S.settings.syllabuses = S.settings.syllabuses || {};
+    S.settings.syllabuses[cat] = lines;
+    commit();
+    alert((COURSE_LABELS[cat] || cat) + " kursi uchun " + lines.length + " ta dars mavzusi muvaffaqiyatli saqlandi! Yangi guruh yaratilganda avtomatik kiritiladi.");
+  },
+
+  resetSylPlan: (id, t) => {
+    const cat = t.dataset.cat;
+    if (!confirm((COURSE_LABELS[cat] || cat) + " dars mavzularini standart shablonga qaytarmoqchimisiz?")) return;
+    S.settings = S.settings || {};
+    S.settings.syllabuses = S.settings.syllabuses || {};
+    S.settings.syllabuses[cat] = JSON.parse(JSON.stringify(SYLLABUS_PRESETS[cat] || []));
+    commit();
+    alert("Standart shablon tiklandi!");
+  }
+};
+
+document.addEventListener('click', e => {
+  const t = e.target.closest('[data-act]');
+  if (!t || !A[t.dataset.act]) return;
+  e.preventDefault();
+  A[t.dataset.act](t.dataset.id, t);
+});
+
+document.addEventListener('change', e => {
+  const t = e.target, c = t.dataset.chg;
+  if (c) {
+    const m = { sf: 'f', ss: 'ss', scat: 'scat', noteCat: 'noteCat', lg: 'lg', ld: 'ld', pg: 'pg', pm: 'pm', sm: 'sm', ag: 'ag', ak: 'ak', am: 'am', dg: 'dg' }[c];
+    ctx[m] = t.value;
+    if (c === 'ag' || c === 'ak') ctx.ac = null;
+    if (c === 'scat') {
+      const tblEl = $('#stbl');
+      if (tblEl) tblEl.innerHTML = stuRows();
+      return;
+    }
+    render();
+    return;
+  }
+  if (t.id === 'imp' && t.files[0]) {
+    const r = new FileReader();
+    r.onload = () => {
+      try {
+        const d = JSON.parse(r.result);
+        if (!d.groups) throw new Error();
+        if (!confirm("Joriy barcha ma'lumotlar yuklangan fayl bilan almashtiriladi. Davom etasizmi?")) return;
+        S = d;
+        commit();
+      } catch (x) { alert("Noto'g'ri JSON fayl!"); }
+    };
+    r.readAsText(t.files[0]);
+  }
+});
+
+document.addEventListener('input', e => {
+  if (e.target.id === 'sq') {
+    ctx.q = e.target.value;
+    const tblEl = $('#stbl');
+    if (tblEl) tblEl.innerHTML = stuRows();
+  }
+  if (e.target.id === 'noteSearchInp') {
+    ctx.noteQ = e.target.value;
+    render();
+  }
+});
+
+document.addEventListener('submit', e => {
+  const f = e.target;
+  if (f.id === 'lf') {
+    e.preventDefault();
+    const g = G(ctx.lg), fd = new FormData(f), att = {};
+    S.students.filter(s => s.g === g.id).forEach(s => {
+      const v = fd.get('a_' + s.id);
+      if (v) att[s.id] = v;
+    });
+    let l = S.lessons.find(x => x.g === g.id && x.date === ctx.ld);
+    const o = { topic: fd.get('topic').trim(), note: fd.get('note').trim(), att };
+    if (l) Object.assign(l, o);
+    else { l = { id: uid(), g: g.id, date: ctx.ld, files: [], ...o }; S.lessons.push(l); }
+    commit();
+    alert("Dars va davomat muvaffaqiyatli saqlandi!");
+    return;
+  }
+
+  const k = f.dataset.form;
+  if (!k) return;
+  e.preventDefault();
+  const d = Object.fromEntries(new FormData(f));
+
+  if (k === 'login') {
+    if (d.u.trim() === S.auth.u && hash(d.p) === S.auth.h) {
+      authed = true;
+      try { sessionStorage.setItem('mk', '1'); } catch (x) {}
+      render();
+    } else {
+      $('#le').textContent = "Login yoki parol noto'g'ri! (Standart: admin4225 / pass4225)";
+    }
+  }
+
+  if (k === 'cred') {
+    const er = $('#ce');
+    if (hash(d.old) !== S.auth.h) { er.textContent = "Joriy parol noto'g'ri."; return; }
+    if (d.n1 && d.n1.length < 6) { er.textContent = "Yangi parol kamida 6 belgidan iborat bo'lsin."; return; }
+    if (d.n1 !== d.n2) { er.textContent = "Yangi parollar bir-biriga mos kelmadi."; return; }
+    S.auth.u = d.u.trim();
+    if (d.n1) S.auth.h = hash(d.n1);
+    save(); render();
+    alert("Kirish ma'lumotlari yangilandi!");
+  }
+
+  if (k === 'gh_save') {
+    S.settings.github.token = d.token.trim();
+    S.settings.github.gistId = d.gistId.trim();
+    S.settings.github.autoSync = !!d.autoSync;
+    save(); render();
+    alert("GitHub sozlamalari saqlandi!");
+  }
+
+  if (k === 'save_rates') {
+    S.settings.rates = S.settings.rates || {};
+    S.settings.rates.komp = { name: "Kompyuter savodxonligi", fee: +d.rate_komp || 250000, teacherPercent: +d.pct_komp || 50 };
+    S.settings.rates.it_foundation = { name: "IT dasturlash: Foundation", fee: +d.rate_it_foundation || 350000, teacherPercent: +d.pct_it_foundation || 50 };
+    S.settings.rates.it_frontend = { name: "IT dasturlash: Frontend", fee: +d.rate_it_frontend || 450000, teacherPercent: +d.pct_it_frontend || 50 };
+    S.settings.rates.it_backend = { name: "IT dasturlash: Backend", fee: +d.rate_it_backend || 500000, teacherPercent: +d.pct_it_backend || 50 };
+    S.settings.rates.indiv = { name: "Individual ta'lim", fee: +d.rate_indiv || 800000, teacherPercent: +d.pct_indiv || 60 };
+    save(); render();
+    alert("Tariflar va foiz stavkalari saqlandi!");
+  }
+});
+
+boot();
+</script>
+</body>
+</html>
